@@ -1,0 +1,35 @@
+
+<head>
+    <script src='../xhr.js'></script>
+    <script src='../please.js'></script>
+    <script src='../lite.js'></script>
+
+</head>
+<body>
+    <div id='container'>Test</div>
+
+    <script>
+
+        let view = lite.extend({
+            content_url : 'demo_template.html'
+            , data_url : 'demo_data.js'
+            , onContentLoaded : function(content){
+                console.log('content loaded');
+            }
+            , onContentBound : function(content){
+                console.log('content bound');
+            }
+            , onDataLoaded : function(data){
+                console.log('data loaded', data)
+                this.data = demo_data;
+                this.content += ' ' + this.data.message;
+            }
+            , onDataBound : function(data){
+                console.log('data bound', data);
+            }
+            
+        });
+        new view().attach(document.getElementById('container'));
+
+    </script>
+</body>
