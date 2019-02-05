@@ -39,16 +39,23 @@ describe('Lite Tests', function(){
     });
 
     describe('Data Loading', function(){
-        it('Loads data if data_url is provided', function(done){
+        it('Adds a script file to the page header if data_url is provided with .js extension', function(done){
             let view = lite.extend({
                 data_url : 'test_data.js'
                 ,onDataLoaded : function(data) { 
                     assert(typeof(test_data) !== 'undefined');
+                    let scripts = document.getElementsByTagName('script');
+                    let has = Array.from(scripts).some(scr => {
+                        let src = scr.src.split('/').pop();
+                        return src == 'test_data.js';
+                    });
+                    assert.isTrue(has, 'script was not found in header');
                     done(); 
                 }
             });
             new view().attach(document.createElement('div'));
         });
+        it('Loads data via Require.js if require is present')
         it('Loads data if .data is defined', function(done){
             let view = lite.extend({
                 data : { defined : true }
@@ -76,12 +83,71 @@ describe('Lite Tests', function(){
 
     })
 
-    describe('Attaching', function(){
-        it('Binds content on attach')
-        it('Binds data on attach')
+    describe('View Lifecycle', function(){
+        it('Executes event functions in order: initialize -> onDataLoaded/onContentLoaded -> onContentBound -> onDataBound', function(done){
+          let view = lite.extend({
+                data_url : 'test_data.js',
+                content_url : 'test_template.html',
+                initialize : function(){
+                    this.initialized = true;
+                },
+                onDataLoaded : function(){
+                    this.data_loaded = true;
+                    assert.isTrue(this.initialized);
+                },
+                onContentLoaded : function() {
+                    this.content_loaded = true;
+                    assert.isTrue(this.initialized)
+                },
+                onContentBound : function(){
+                    this.content_bound = true;
+                    assert.isTrue(this.data_loaded && this.content_loaded);
+                },
+                onDataBound : function(){
+                    this.data_bound = true;
+                    assert.isTrue(this.content_bound);
+                    done();
+                }
+            });
+            new view().attach(document.createElement('div'));   
+        })
+    });
 
-        it('Loads both content and data before binding')
-
+    describe('Content attaching', function(){
+        it('Binds content on attach', function(done){
+            let div = document.createElement('div');
+            div.id = "content_attach_test_1_div"
+            div.style.display = 'none';
+            document.body.appendChild(div);
+            let view = lite.extend({
+                content : '<span id="content_attach_test_1_span">test</span>'
+                , onContentBound : function(){
+                    assert.isTrue(document.getElementById('content_attach_test_1_span').innerHTML == 'test');
+                    done();
+                }
+            });
+            new view().attach(div);
+        });
+        
 
     });
+
+    describe('Data binding', function(){
+        it('Automatically populates html  fields with \'bind\' attributes', function(done){
+            let div = document.createElement('div');
+            div.id = 'data_binding_test_1_div';
+            div.style.display = 'none';
+            document.body.appendChild(div);
+            let view = lite.extend({
+                content : '<span id="data_binding_test_1_span" bind="TestField">a</span>',
+                data : { TestField : 'b'},
+                onDataBound : function(){
+                    let inner = document.getElementById('data_binding_test_1_span').innerHTML;
+                    assert.isTrue(inner === 'b');
+                    done();
+                }
+            });
+            new view().attach(div);
+        });
+    })
 });
