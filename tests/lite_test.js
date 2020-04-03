@@ -169,7 +169,7 @@ describe('Lite Tests', function(){
             let found = false;
             let links = document.getElementsByTagName('link');
             for(let i = 0; i < links.length; i++){
-                if(links[i].href.contains('style_sheet_loading')){
+                if(links[i].href.split('/').pop() === 'lite_test_stylesheet.css') {
                     found = true;
                 };
             }

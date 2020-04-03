@@ -107,5 +107,21 @@ let Lite = function(args={}){
 
         _lite.onDataBound(data);
     }
+
+    _lite.loadStyleSheet = function(uri) {
+        let links = document.getElementsByTagName('link');
+        let has = Array.from(links).some((link) => { 
+            return link.href === uri;
+        });
+        if(has) { return; }
+
+        let css = document.createElement('link');
+        css.rel = 'stylesheet';
+        css.type = 'text/css';
+        css.href = uri;
+        
+        let head = document.getElementsByTagName('head')[0];
+        head.appendChild(css);
+    }
 };
 let lite = new Lite();
