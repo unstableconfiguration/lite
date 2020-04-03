@@ -149,5 +149,31 @@ describe('Lite Tests', function(){
             });
             new view().attach(div);
         });
-    })
+    });
+
+    describe('Utilities', function() { 
+        it('Should add a .css file to the header using .loadStyleSheet()', function() { 
+
+            let div = document.createElement('div');
+            div.id = 'style_sheet_loading';
+            div.style.display = 'none';
+            document.body.appendChild(div);
+            let view = lite.extend({
+                content : '<span id="style_sheet_loading_span"></span>',
+                onContentBound : function() { 
+                    this.loadStyleSheet('lite_test_stylesheet.css');
+                }
+            });
+            new view().attach(div);
+
+            let found = false;
+            let links = document.getElementsByTagName('link');
+            for(let i = 0; i < links.length; i++){
+                if(links[i].href.contains('style_sheet_loading')){
+                    found = true;
+                };
+            }
+            assert.isTrue(found);
+        });
+    });
 });
