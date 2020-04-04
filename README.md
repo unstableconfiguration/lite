@@ -38,17 +38,17 @@ Lite is a utility for building single page applications. It creates views that l
 
 ## Public Interfaces
 
-    * .attach(container) : Initiates the view lifecycle, loading the content and data, and binding them to the page.
-    * .extend(options) : Creates a derived class with Lite as its base which is extended by the properties in the options object parameter. 
-    * .loadStyleSheet(uri) : Adds a <link> element to the page head if one does not already exist for the given uri
+* .attach(container) : Initiates the view lifecycle, loading the content and data, and binding them to the page.
+* .extend(options) : Creates a derived class with Lite as its base which is extended by the properties in the options object parameter. 
+* .loadStyleSheet(uri) : Adds a <link> element to the page head if one does not already exist for the given uri
 
 ## View Lifecycle 
 The view lifecycle contains 4 events. Content and data are loaded asynchronously, so there is not a guarantee of the order for onContentLoaded and onDataLoaded. Content is bound before data, so onContentBound will execute before onDataBound.
 
-    * onContentLoaded(content): Executes after content has been loaded but before it has been bound to the page.
-    * onDataLoaded: Executes after data has been loaded, but before it has been bound to the content. 
-    * onContentBound: Executes after .html content has been added to the page. 
-    * onDataBound: Executes after data has been bound to the page. 
+* onContentLoaded(content): Executes after content has been loaded but before it has been bound to the page.
+* onDataLoaded: Executes after data has been loaded, but before it has been bound to the content. 
+* onContentBound: Executes after .html content has been added to the page. 
+* onDataBound: Executes after data has been bound to the page. 
 
 ## Features
 
@@ -76,8 +76,8 @@ new view().attach(container);
 
 
 ## Future plans
-    * Loading data by async function: For loading data from APIs. A promise-like function can be provided to load data asynchronously from external sources.
-    * Revisit xhr and please : These are small utilities that were developed as independent from lite, but that lite is dependent on. They may get revamped and either removed as dependencies or integrated more thoroughly into lite. 
+* Loading data by async function: For loading data from APIs. A promise-like function can be provided to load data asynchronously from external sources.
+* Revisit xhr and please : These are small utilities that were developed as independent from lite, but that lite is dependent on. They may get revamped and either removed as dependencies or integrated more thoroughly into lite. 
 
 
 
