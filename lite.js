@@ -18,11 +18,6 @@ let Lite = function(args={}){
     for(let a in args)
         this[a] = args[a];
     
-    let _initialize = function() {
-        _lite.initialize();
-    }
-    _initialize();
-    
     _lite.attach = function(container) {
         if(container) _lite.container = container;
         please.do(_loadContent())
@@ -108,7 +103,7 @@ let Lite = function(args={}){
         _lite.onDataBound(data);
     }
 
-    _lite.loadStyleSheet = function(uri) {
+    _lite.loadCSS = function(uri) {
         let links = document.getElementsByTagName('link');
         let has = Array.from(links).some((link) => { 
             return link.href === uri;
@@ -123,5 +118,7 @@ let Lite = function(args={}){
         let head = document.getElementsByTagName('head')[0];
         head.appendChild(css);
     }
+
+    _lite.initialize.bind(_lite)();
 };
 let lite = new Lite();
