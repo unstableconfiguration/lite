@@ -1,97 +1,69 @@
 
-
 let Lite = function(args={}){
     let _lite = this;
-    _lite.container = '';
-    _lite.content = '<div>no content</div>';
-    _lite.content_url = '';
-    _lite.data;
-    _lite.data_url = ''
+    _lite.container;
+    _lite.contentUrl = '';
 
-    _lite.initialize = ()=>{}
-    _lite.onContentLoaded = ((c)=>{});
-    _lite.onContentBound = ((c)=>{});
-    // data loading makes sense, it loads, it arrives. 
-    _lite.onDataLoaded = ((d)=>{});
-    // data bound only makes sense if we have additional binding logic 
-    _lite.onDataBound = ((d)=>{});
-    for(let a in args)
-        this[a] = args[a];
+    _lite.initialize = () => {}
+    _lite.content = null;
+    _lite.onContentLoaded = ((c) => {});
+    _lite.onContentBound = ((c) => {}); 
     
-    _lite.attach = function(container) {
-        if(container) _lite.container = container;
-        please.do(_loadContent())
-            .and(_loadData())
-            .then((x, y)=>{
+    _lite.data = null;
+    _lite.loadData = ((d) => {});
+    _lite.onDataLoaded = ((d) => {});
+    _lite.onDataBound = ((d) => {});
 
-
-                _bindContent(_lite.content);
-                _bindData(_lite.data);
-            });
-    }
-    _lite.extend = function(args){
-        return function(more_args) { 
-            for(let k in more_args)
-                args[k] = more_args[k];
-            Lite.call(this, args);
-        }
-    }
-
-    let _loadContent = function() { 
-        if(_lite.content_url)
-            return xhr.get(_lite.content_url, (content)=>{
-                _lite.content = content;
-                _lite.onContentLoaded(content);
-            });
-        if(!_lite.content) throw`no content or content url for template`;
+    /* setContent
+        Explicitly kick off the content loading and binding process
+    */
+    _lite.setContent = function(content) {
+        _lite.content = content;
         _lite.onContentLoaded(_lite.content);
+        if(_lite.container) { _lite._bindContent(_lite.content); }
+        if(_lite.data) { _lite._bindData(_lite.data); }
     }
-    let _bindContent = function(){
+
+    /* setData
+        Explicitly kick off the data loading and binding process
+    */
+    _lite.setData = function(data) { 
+        _lite.data = data;
+        _lite.onDataLoaded(_lite.data);
+        if(_lite.content) { _lite._bindData(_lite.data); }
+    }
+   
+    /* Attach
+        Kicks off the view lifecycle of loading and binding. 
+    */
+    _lite.attach = function(container) {
+        if(container) { _lite.container = container; }
+
+        _lite._loadContent();
+        _lite.loadData();
+    }
+
+    _lite._loadContent = function() { 
+        if(_lite.contentUrl)
+            // replace with fetch api
+            return xhr.get(_lite.contentUrl, (content) => {
+                _lite.setContent(content);
+            });
+        else if (_lite.content) { _lite.setContent(_lite.content); }
+        if(!_lite.content) { throw(new Error(`no content or content url for template`)); } 
+    }
+
+    _lite._bindContent = function(){
         if(_lite.container && _lite.content){
             while(_lite.container.firstChild)
                 _lite.container.removeChild(_lite.container.firstChild);
             _lite.container.insertAdjacentHTML('afterbegin', _lite.content);
             _lite.onContentBound(_lite.content);
         }
-        else throw`no container or no content for template`
-    }
-    let _loadData = function() {
-        let data_loaded = function(data){
-            _lite.data = data;
-            _lite.onDataLoaded(data);
-            return _lite.data;
-        }
-        if(_lite.data_url.slice(-3)==='.js') {
-            if(typeof(require) !== 'undefined')
-                return new Promise((s, f)=>{
-                    require([_lite.data_url.slice(0, -3)], (data)=>{ 
-                        s(data_loaded(data));
-                    });
-                });
-            else {
-                return new Promise((s, f)=>{
-                    let script = document.createElement('script');
-                    script.src = _lite.data_url;
-                    let message = 'script ' + script.src + ' added to header';
-                    script.onload = function(x){
-                        s(data_loaded(message));
-                    }
-
-                    let has = Array.from(document.getElementsByTagName('script'))
-                        .some(scr => scr.src === script.src);
-                    if(!has) document.getElementsByTagName('head')[0].appendChild(script);
-                    else s(data_loaded(message));
-                });
-            }
-        }
-        
-        if(!_lite.data_url && _lite.data) 
-            return data_loaded(_lite.data);
-        
-        if(_lite.data_url) return xhr.get(_lite.data_url, (data)=>{ data_loaded(data);});        
+        else { throw(new Error(`no container or no content for template`)); }
     }
     
-    let _bindData = function(data) {
+    _lite._bindData = function(data) {
         _lite.container.querySelectorAll('[bind]')
             .forEach((el)=>{
                 let prop = el.getAttribute('bind') || el.id;
@@ -103,7 +75,7 @@ let Lite = function(args={}){
         _lite.onDataBound(data);
     }
 
-    _lite.loadCSS = function(uri) {
+    _lite.loadStyleSheet = function(uri) {
         let links = document.getElementsByTagName('link');
         let has = Array.from(links).some((link) => { 
             return link.href === uri;
@@ -119,6 +91,22 @@ let Lite = function(args={}){
         head.appendChild(css);
     }
 
+    /* When Lite or any derived class is instantiated, the args 
+    can add to it or override its defaults. */
+    for(let a in args) { this[a] = args[a]; }
+
+    /* extend 
+        Creates a base class. args passed in will be propagated to all 
+        instances of the new class. */
+    _lite.extend = function(args){
+        return function(more_args) { 
+            for(let k in more_args)
+                args[k] = more_args[k];
+            Lite.call(this, args);
+        }
+    }
+
+    /* Call .initialize as the last thing we do as part of instantiation */
     _lite.initialize.bind(_lite)();
 };
 let lite = new Lite();
