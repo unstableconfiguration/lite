@@ -50,7 +50,7 @@ describe('Lite Tests', function(){
 
             let view = lite.extend({
                 container : div,
-                contentUrl : 'test_template.html',
+                contentUrl : 'test-template.html',
                 onContentLoaded : function(html) {
                     assert.isTrue(this.content.substr(0, 5) === '<div>');
                 }, 
@@ -72,7 +72,7 @@ describe('Lite Tests', function(){
     describe('View Lifecycle', function(){
         it('Executes event functions in order: initialize -> onDataLoaded/onContentLoaded -> onContentBound -> onDataBound', function(done){
           let view = lite.extend({
-                contentUrl : 'test_template.html',
+                contentUrl : 'test-template.html',
                 loadData : function() {
                     let view = this;
                     import('./test-data.js')

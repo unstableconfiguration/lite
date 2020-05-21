@@ -8,22 +8,33 @@ Lite is a utility for building single page applications. It creates views that l
         // Content can be provided as a html string
         content : '<div id="exampleDiv"></div>'
         // Content can be loaded by url
-        , content_url : 'exampleTemplate.html'
+        , contentUrl : 'exampleTemplate.html'
 
         // Data can be declared and added directly
         , data : { message : 'hello world' }
-        /* Data can be loaded as a file. If done this way, the file will be added to the header, but we will have to set the .data property in .onDataLoaded */ 
-        , data_url : 'demo_data.js'
+
+        // Data can be loaded via an async function 
+            // loadData is called with .attach()
+        , loadData : function() {
+            let view = this;
+            import('exampleData.js')
+                .then((result) => {
+                    // .setData kicks off the data binding lifecycle
+                    view.setData(result.data);
+                });
+        }
 
         , onContentLoaded : function(content){
             console.log('1a', 'content loaded', content);
         }
         , onDataLoaded : function(data){
-            console.log('1b', 'data loaded', data)
+            console.log('2', 'data loaded', data)
         }
+        // Executes after onContentLoaded
         , onContentBound : function(content){
-            console.log('2', 'content bound');
+            console.log('1b', 'content bound');
         }
+        // Executes after onContentBound and onDataLoaded
         , onDataBound : function(data){
             console.log('3', 'data bound', data);
         }
@@ -36,25 +47,23 @@ Lite is a utility for building single page applications. It creates views that l
     new view().attach(container);
 ```
 
-## Public Interfaces
+## Public functions
 
 * .attach(container) : Initiates the view lifecycle, loading the content and data, and binding them to the page.
 * .extend(options) : Creates a derived class with Lite as its base which is extended by the properties in the options object parameter. 
 * .loadStyleSheet(uri) : Adds a <link> element to the page head if one does not already exist for the given uri
 
-## View Lifecycle 
-The view lifecycle contains 4 events. Content and data are loaded asynchronously, so there is not a guarantee of the order for onContentLoaded and onDataLoaded. Content is bound before data, so onContentBound will execute before onDataBound.
+## View Lifecycle hooks
+The view lifecycle contains several events that can be overridden to execute custom code. 
 
-* onContentLoaded(content): Executes after content has been loaded but before it has been bound to the page.
-* onDataLoaded: Executes after data has been loaded, but before it has been bound to the content. 
+* initialize: Executes as the last part of the object initialization.
+* loadData: Executes when .attach() is called if .data has not been set. 
+* onDataLoaded: executes when .setData(data) is called
+* onDataBound: Executes after .onDataLoaded() and after .onContentBound()
+* onContentLoaded: Executes after content has been loaded but before it has been bound to the page.
 * onContentBound: Executes after .html content has been added to the page. 
-* onDataBound: Executes after data has been bound to the page. 
 
 ## Features
-
-#### require.js integration: 
-When data_url points to a file utilizing require.js' define() function, .data will 
-automatically be set using the results of that.
 
 #### Data binding 
 HTML elements in the content can be given a 'bind' attribute. If the value for bind matches a property in the data, the element's .value or .innerHTML will be set to the value from the data for that property. 
@@ -73,11 +82,6 @@ document.body.appendChild(container);
 new view().attach(container);
 ```
 
-
-
-## Future plans
-* Loading data by async function: For loading data from APIs. A promise-like function can be provided to load data asynchronously from external sources.
-* Revisit xhr and please : These are small utilities that were developed as independent from lite, but that lite is dependent on. They may get revamped and either removed as dependencies or integrated more thoroughly into lite. 
 
 
 
