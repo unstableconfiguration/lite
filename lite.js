@@ -45,7 +45,6 @@ let Lite = function(args={}){
 
     _lite._loadContent = function() { 
         if(_lite.contentUrl)
-            // replace with fetch api
             return xhr.get(_lite.contentUrl, (content) => {
                 _lite.setContent(content);
             });
