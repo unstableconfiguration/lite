@@ -64,6 +64,50 @@ describe('Lite Tests', function(){
         });
     });
 
+    describe('Data Loading', function() { 
+        it('Fulfills the data lifecycle when data is set', function(done) { 
+            let div = addDiv('data-set-test');
+
+            let view = lite.extend({
+                content : '<div></div>',
+                data : { message : 'testing' },
+                onDataLoaded : function(data) {
+                    assert.isTrue(data.message === 'testing' );
+                    this.dataLoaded = true;
+                },
+                onDataBound : function(data) { 
+                    assert(this.dataLoaded);
+                    assert.isTrue(data.message === 'testing');
+                    assert.isTrue(this.data.message === 'testing');
+                    done();
+                }
+            });
+            new view().attach(div);
+        });
+        it('Fulfills the data lifecycle when .setData is called', function(done) {
+            let div = addDiv('data-load-test');
+
+            let view = lite.extend({
+                content : '<div></div>',
+                loadData : function() { 
+                    this.setData({ message : 'testing' });
+                },
+                onDataLoaded : function(data) {
+                    assert.isTrue(data.message === 'testing' );
+                    this.dataLoaded = true;
+                },
+                onDataBound : function(data) { 
+                    assert(this.dataLoaded);
+                    assert.isTrue(data.message === 'testing');
+                    assert.isTrue(this.data.message === 'testing');
+                    done();
+                }
+            });
+            new view().attach(div);
+        });
+        
+    });
+
     describe('Synchronicity', function() { 
         it('')
 

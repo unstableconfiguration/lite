@@ -20,8 +20,11 @@ let Lite = function(args={}){
     _lite.setContent = function(content) {
         _lite.content = content;
         _lite.onContentLoaded(_lite.content);
-        if(_lite.container) { _lite._bindContent(_lite.content); }
-        if(_lite.data) { _lite._bindData(_lite.data); }
+        if(_lite.container) { 
+            _lite._bindContent(_lite.content); 
+            _lite.__isContentBound = true;
+        }
+        if(_lite.__isDataSet) { _lite._bindData(_lite.data); }
     }
 
     /* setData
@@ -29,8 +32,9 @@ let Lite = function(args={}){
     */
     _lite.setData = function(data) { 
         _lite.data = data;
+        _lite.__isDataSet = true;
         _lite.onDataLoaded(_lite.data);
-        if(_lite.content) { _lite._bindData(_lite.data); }
+        if(_lite.__isContentBound) { _lite._bindData(_lite.data); }
     }
    
     /* Attach
@@ -40,7 +44,7 @@ let Lite = function(args={}){
         if(container) { _lite.container = container; }
 
         _lite._loadContent();
-        _lite.loadData();
+        _lite._loadData();
     }
 
     _lite._loadContent = function() { 
@@ -50,6 +54,11 @@ let Lite = function(args={}){
             });
         else if (_lite.content) { _lite.setContent(_lite.content); }
         if(!_lite.content) { throw(new Error(`no content or content url for template`)); } 
+    }
+
+    _lite._loadData = function() { 
+        if(_lite.data) { _lite.setData(_lite.data); }
+        else { _lite.loadData(); }
     }
 
     _lite._bindContent = function(){
