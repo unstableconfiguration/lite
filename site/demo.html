@@ -4,16 +4,20 @@
     <meta charset="UTF-8">
     <link href='css/site.css' rel='stylesheet' />
 
-    <link rel='stylesheet' href='../css/gridify.css'>
-    <link rel='stylesheet' href='../css/style-demo.css'>
+    <link rel='stylesheet' href='../css/lite.css'>
     
-    <link rel='stylesheet' href='css/vendor/prism.css'>
+    <!--<link rel='stylesheet' href='css/vendor/prism.css'>-->
     <script src='scripts/vendor/prism.js'></script>
+
+    <script src='scripts/vendor/marked.js'></script>
+
+    <script src='../xhr.js'></script>
+    <script src='../lite.js'></script>
 
 </head>
 <body>
     <div class='site-header'>
-        <a href='../index.html'>gridify</a>
+        <a href='../index.html'>lite</a>
     </div>
     <div class='top-nav'>
         <a href='demo.html'>demo</a>
@@ -21,11 +25,42 @@
         <a href='tests.html'>tests</a>
     </div>
     <div id='content' class='site-content'>
-
+        <div id='demo-text'></div>
+        <div>
+            <pre class='language-javascript'>
+                <code id='demo-code'></code>
+            </pre>
+        </div>
     </div>
 </body>
 
 <script>
+    (()=>{
+    let demoJS = function() {
+        let contentView = lite.extend({
+            contentUrl : 'demo.md',
+            onContentLoaded : function(content) { 
+                console.log('content loaded');
+                this.content = marked(content);
+            },
+            onContentBound : function(content) { 
+                console.log('content bound');
+            }
+        });
+        new contentView().attach(document.getElementById('demo-text'));
+        
+        let codeView = lite.extend({
+            // .toString cuts off the variable declaration, so we add it back in for clarity
+            content : '    let demoJS = ' + demoJS.toString(),
+            onContentLoaded : function(content) { 
+                this.loadStyleSheet('css/vendor/prism.css');
+            }
+        });
+        new codeView().attach(document.getElementById('demo-code'));
+    }
+
+    demoJS();
+    })();
 
 </script>
 

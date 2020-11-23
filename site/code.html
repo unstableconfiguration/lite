@@ -10,7 +10,7 @@
 </head>
 <body>
     <div class='site-header'>
-        <a href='../index.html'>gridify</a>
+        <a href='../index.html'>lite</a>
     </div>
     <div class='top-nav'>
         <a href='demo.html'>demo</a>
@@ -34,7 +34,7 @@
         }
 
         fetchCode('../lite.js', (text) => {
-            document.getElementById('gridifyCode').innerHTML = 
+            document.getElementById('liteCode').innerHTML = 
                 Prism.highlight(text, Prism.languages.javascript, 'javascript');
         });
 
