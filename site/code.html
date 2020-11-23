@@ -1,0 +1,37 @@
+
+<!DOCTYPE html>
+<head>
+    <meta charset="UTF-8">
+    <link href='css/site.css' rel='stylesheet' />
+
+    <link href='css/vendor/prism.css' rel='stylesheet'/>
+    <script src='scripts/vendor/prism.js'></script>
+
+</head>
+<body>
+    <div class='site-header'>
+        <a href='../index.html'>gridify</a>
+    </div>
+    <div class='site-content'>
+        <p><h3>main code</h3></p>
+        <p>Builds a plain HTML table from a set of data and configuration options.</p>
+        <pre class='language-javascript'><code id='liteCode'></code></pre>
+
+    </div>
+</body>
+<script>
+
+    (()=>{
+        let fetchCode = function(filePath, onLoaded) {
+            fetch(filePath).then(response => {
+                response.text().then(text => onLoaded(text));
+            })
+        }
+
+        fetchCode('../lite.js', (text) => {
+            document.getElementById('gridifyCode').innerHTML = 
+                Prism.highlight(text, Prism.languages.javascript, 'javascript');
+        });
+
+    })();
+</script>
