@@ -98,7 +98,21 @@ export let LiteTest = function() {
         });
 
         describe('Data binding', function() { 
-            it('should bind data using the data-field attribute')
+            it('should bind data using the data-field attribute', function(done) { 
+                let view = lite.extend({
+                    contentUrl : '../tests/lite-test/lite-test.html',
+                    data : { testField : 'testing' },
+                    container : document.createElement('div'),
+                    onDataBound : function(data) {
+                        assert(data.testField == 'testing');
+                        let span = this.container.firstChild.firstElementChild;
+                        assert(span.innerHTML == 'testing');
+                        done();
+                    }
+                });
+                view = new view();
+                view.attach();
+            });
         });
 
         describe('Script and Stylesheet loading', function() {
