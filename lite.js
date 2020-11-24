@@ -14,7 +14,6 @@ export let Lite = function(args={}){
     
     _lite.data = null;
     _lite.loadData = ((d) => {});
-    _lite.onDataLoaded = ((d) => {});
     _lite.onDataBound = ((d) => {});
 
     /* setContent
@@ -36,7 +35,6 @@ export let Lite = function(args={}){
     _lite.setData = function(data) { 
         _lite.data = data;
         _lite.__isDataSet = true;
-        _lite.onDataLoaded(_lite.data);
         if(_lite.__isContentBound) { _lite._bindData(_lite.data); }
     }
    
