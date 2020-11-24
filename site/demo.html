@@ -11,9 +11,6 @@
 
     <script src='scripts/vendor/marked.js'></script>
 
-    <script src='../xhr.js'></script>
-    <script src='../lite.js'></script>
-
 </head>
 <body>
     <div class='site-header'>
@@ -34,7 +31,9 @@
     </div>
 </body>
 
-<script>
+<script type='module'>
+    import { lite } from '../lite.js';
+
     (()=>{
     let demoJS = function() {
         let contentView = lite.extend({
