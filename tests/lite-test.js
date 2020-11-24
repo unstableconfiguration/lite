@@ -116,8 +116,24 @@ export let LiteTest = function() {
         });
 
         describe('Script and Stylesheet loading', function() {
-            it('should load a css file if loadStyleSheet is called');
-            if('should load a script file if loadScript is called');
+            it('should load a css file if loadStyleSheet is called', function() { 
+                let view = lite.extend({
+                    content : 'a',
+                    initialize : function() { 
+                        this.loadStyleSheet('../tests/lite-test/lite-test.css');
+                    }
+                });
+                new view().attach();
+                let css = document.createElement('link');
+                css.href = '../tests/lite-test/lite-test.css';
+                
+                let links = document.getElementsByTagName('link');
+                let has = Array.from(links).some((link) => { 
+                    return link.href == css.href;
+                });
+                assert(has);
+            });
+            it('should load a script file if loadScript is called');
         });
 
 
