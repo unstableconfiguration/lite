@@ -70,9 +70,30 @@ export let LiteTest = function() {
         });
 
         describe('Content loading and binding', function() { 
-            it('should load text content from external source if contentUrl is provided')
-            it('should allow content to be set')
-            it('should attach content to container element')
+            it('should load text content from external source if contentUrl is provided', function(done) {
+                let view = lite.extend({
+                    contentUrl : '../tests/lite-test/lite-test.html',
+                    container : document.createElement('div'),
+                    onContentLoaded : function(content) { 
+                        assert(content.includes('test-span'));
+                        done();
+                    }
+                });
+                view = new view();
+                view.attach();
+            });
+            it('should attach content to container element', function(done) {
+                let view = lite.extend({
+                    contentUrl : '../tests/lite-test/lite-test.html',
+                    container : document.createElement('div'),
+                    onContentBound : function(content) { 
+                        assert(view.container.innerHTML.includes('test-span')); 
+                        done();
+                    }
+                });
+                view = new view();
+                view.attach();
+            });
 
         });
 
