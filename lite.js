@@ -13,7 +13,6 @@ export let Lite = function(args={}){
     _lite.onContentBound = ((c) => {}); 
     
     _lite.data = null;
-    _lite.loadData = ((d) => {});
     _lite.onDataBound = ((d) => {});
 
     /* setContent
@@ -45,7 +44,6 @@ export let Lite = function(args={}){
         if(container) { _lite.container = container; }
 
         _lite._loadContent();
-        _lite._loadData();
     }
 
     _lite._loadContent = function() { 
@@ -59,11 +57,6 @@ export let Lite = function(args={}){
         if(!_lite.content) { throw(new Error(`no content or content url for template`)); } 
     }
 
-    _lite._loadData = function() { 
-        if(_lite.data) { _lite.setData(_lite.data); }
-        else { _lite.loadData(); }
-    }
-
     _lite._bindContent = function(){
         if(_lite.container && _lite.content){
             while(_lite.container.firstChild)
@@ -75,9 +68,9 @@ export let Lite = function(args={}){
     }
     
     _lite._bindData = function(data) {
-        _lite.container.querySelectorAll('[bind]')
+        _lite.container.querySelectorAll('[data-field]')
             .forEach((el)=>{
-                let prop = el.getAttribute('bind') || el.id;
+                let prop = el.getAttribute('data-field') || el.id;
                 let val = prop.split('.').reduce((acc, p)=>{ return acc[p]; }, data)
                 if(typeof(el.value) !== 'undefined') el.value = val;
                 else el.innerHTML = val;
