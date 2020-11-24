@@ -22,6 +22,9 @@
         <p>The main code sets up the binding logic and event hooks. </p>
         <pre class='language-javascript'><code id='liteCode'></code></pre>
 
+        <p><h3>xhr</h3></p>
+        <p>XHR is a XMLHttpRequest utility included with the lite framework and used by it for loading content. </p>
+        <pre class='language-javascript'><code id='xhrCode'></code></pre>
 
         <div id='filler' style='height:200px'></div>
     </div>
@@ -32,11 +35,16 @@
         let fetchCode = function(filePath, onLoaded) {
             fetch(filePath).then(response => {
                 response.text().then(text => onLoaded(text));
-            })
+            });
         }
 
         fetchCode('../lite.js', (text) => {
             document.getElementById('liteCode').innerHTML = 
+                Prism.highlight(text, Prism.languages.javascript, 'javascript');
+        });
+
+        fetchCode('../xhr.js', (text) => {
+            document.getElementById('xhrCode').innerHTML = 
                 Prism.highlight(text, Prism.languages.javascript, 'javascript');
         });
 
