@@ -1,6 +1,9 @@
+import { XHR } from './xhr.js';
 
-let Lite = function(args={}){
+export let Lite = function(args={}){
     let _lite = this;
+    _lite.xhr = new XHR();
+
     _lite.container;
     _lite.contentUrl = '';
 
@@ -49,7 +52,7 @@ let Lite = function(args={}){
 
     _lite._loadContent = function() { 
         if(_lite.contentUrl)
-            return xhr.get(_lite.contentUrl, (content) => {
+            return _lite.xhr.get(_lite.contentUrl, (content) => {
                 _lite.setContent(content);
             });
         else if (_lite.content) { _lite.setContent(_lite.content); }
@@ -117,4 +120,5 @@ let Lite = function(args={}){
     /* Call .initialize as the last thing we do as part of instantiation */
     _lite.initialize.bind(_lite)();
 };
-let lite = new Lite();
+
+export let lite = new Lite();

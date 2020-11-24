@@ -1,5 +1,4 @@
-
-let xhr = new (function() {
+export let XHR = function() { 
     let _xhr = this;
 
     _xhr.get = function(url, success, options={}){
@@ -33,10 +32,7 @@ let xhr = new (function() {
         xhr.send();
         return xhr;
     }
-    return _xhr;
-})();
+    return _xhr;    
+}
 
-
-
-
-
+export let xhr = new XHR();
