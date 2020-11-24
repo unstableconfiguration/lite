@@ -25,7 +25,7 @@ export let Lite = function(args={}){
             _lite._bindContent(_lite.content); 
             _lite.__isContentBound = true;
         }
-        if(_lite.__isDataSet) { _lite._bindData(_lite.data); }
+        if(_lite.__isDataSet) { _lite.bindData(_lite.data); }
     }
 
     /* setData
@@ -34,7 +34,7 @@ export let Lite = function(args={}){
     _lite.setData = function(data) { 
         _lite.data = data;
         _lite.__isDataSet = true;
-        if(_lite.__isContentBound) { _lite._bindData(_lite.data); }
+        if(_lite.__isContentBound) { _lite.bindData(_lite.data); }
     }
    
     /* Attach
@@ -67,7 +67,7 @@ export let Lite = function(args={}){
         else { throw(new Error(`no container or no content for template`)); }
     }
     
-    _lite._bindData = function(data) {
+    _lite.bindData = function(data) {
         _lite.container.querySelectorAll('[data-field]')
             .forEach((el)=>{
                 let prop = el.getAttribute('data-field') || el.id;
