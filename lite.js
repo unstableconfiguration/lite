@@ -52,9 +52,11 @@ export let Lite = function(args={}){
 
     _lite._loadContent = function() { 
         if(_lite.contentUrl)
-            return _lite.xhr.get(_lite.contentUrl, (content) => {
-                _lite.setContent(content);
-            });
+            return _lite.xhr.get(_lite.contentUrl)
+                .then(r => _lite.setContent(r))
+                .catch(e => { 
+                    throw(new Exception('Error when fetching resource ${_lite.contentUrl}'));
+                });
         else if (_lite.content) { _lite.setContent(_lite.content); }
         if(!_lite.content) { throw(new Error(`no content or content url for template`)); } 
     }
