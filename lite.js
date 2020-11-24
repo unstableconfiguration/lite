@@ -42,7 +42,8 @@ export let Lite = function(args={}){
     */
     _lite.attach = function(container) {
         if(container) { _lite.container = container; }
-
+        if(_lite.data) { _lite.setData(_lite.data); }
+        
         _lite._loadContent();
     }
 
