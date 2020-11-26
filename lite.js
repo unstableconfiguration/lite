@@ -1,8 +1,10 @@
 import { XHR } from './xhr.js';
+import { Router } from './router.js';
 
 export let Lite = function(args={}){
     let _lite = this;
     _lite.xhr = new XHR();
+    _lite.router = new Router();
 
     _lite.container;
     _lite.contentUrl = '';
