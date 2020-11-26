@@ -1,5 +1,4 @@
 import { lite } from '../lite.js';
-window.lite = lite;
 
 export let LiteTest = function() { 
     let assert = chai.assert;
