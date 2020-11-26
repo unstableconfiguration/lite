@@ -45,7 +45,7 @@ export let XHR = function() {
         events.forEach(e => { 
             let ev = args[e] || args['on' + e];
             if(ev) { 
-                xhr.addEventListener(e.name, (e) => ev(e))
+                xhr.addEventListener(e, (e) => ev(e))
             }
         });
         return xhr;
