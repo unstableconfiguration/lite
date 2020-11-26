@@ -25,8 +25,10 @@
 <script>mocha.setup('bdd');</script>
 <script type='module'>
     import { LiteTest } from '../tests/lite-test.js';
+    import { XHRTest } from '../tests/xhr-test.js';
 
     LiteTest();
+    XHRTest();
     mocha.run();
 </script>
 
