@@ -3,11 +3,11 @@ export let XHR = function() {
     let _xhr = this;
 
     _xhr.get = function(url, args = {}) { 
-        let xhr = _xhr.build(url, args);
+        let xhr = _xhr.init(url, args);
         return xhr;
     }
 
-    _xhr.build = function(url, args = {}) {
+    _xhr.init = function(url, args = {}) {
         args = _xhr.setArgDefaults(args);
 
         let xhr = new XMLHttpRequest();
