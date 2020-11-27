@@ -48,14 +48,19 @@ export let Router = function(options = {}) {
         }
         if(typeof(hash) !== 'string') { return; }
 
+        let pattern = router.getHashRegex(hash);
+        
+        _router.paths.push({ pattern : pattern, value : value });
+        return _router.paths;
+    }
+
+    router.getHashRegex = function(hash) { 
         hash = hash.replace(/{.+}/, '.+');
         hash = hash.replace('/', '\/');
         /* hash to match #location/hash
             with ?optional=true&parameters=1*/
         let pattern = new RegExp('^\#' + hash + '(\\?.*)?$');
-        
-        _router.paths.push({ pattern : pattern, value : value });
-        return _router.paths;
+        return pattern;
     }
 
     router.addPaths = function(paths) { 
