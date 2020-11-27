@@ -4,9 +4,9 @@ export let XHRTest = function() {
     let assert = chai.assert;
 
     describe('XHR tests', function() { 
-        describe('xhr.get() tests', function() { 
+        describe('xhr.init() tests', function() { 
             it('should fetch text data from an external resource', function(done) { 
-                let request = xhr.get('../tests/xhr-test/xhr-test.txt', {
+                let request = xhr.init('../tests/xhr-test/xhr-test.txt', {
                     load : function(r) {
                         assert(request.response == 'test');
                         done();
@@ -16,7 +16,7 @@ export let XHRTest = function() {
             });
 
             it('should return an unsent XMLHttpRequest object', function(done) { 
-                let request = xhr.get('../does/not/really/matter');
+                let request = xhr.init('../does/not/really/matter');
                 assert(request instanceof XMLHttpRequest);
                 setTimeout(()=>{
                     assert(request.readyState == 1);
@@ -25,7 +25,7 @@ export let XHRTest = function() {
             });
 
             it('should allow for setting of XMLHttpRequest events', function(done) {
-                let request = xhr.get('../tests/xhr-test/xhr-test.txt', { 
+                let request = xhr.init('../tests/xhr-test/xhr-test.txt', { 
                     load : function() { 
                         done();
                     }
@@ -34,7 +34,7 @@ export let XHRTest = function() {
             });
 
             it('should return a "thennable" interface', function() { 
-                let request = xhr.get('../xyz', { 
+                let request = xhr.init('../xyz', { 
                     load : function() {},
                     error : function() {}
                 });
@@ -43,11 +43,10 @@ export let XHRTest = function() {
             });
 
             it('should send when .then() is called', function(done) {
-                xhr.get('../tests/xhr-test/xhr-test.txt')
+                xhr.init('../tests/xhr-test/xhr-test.txt')
                     .then(r => { done(); });
             });
 
         });
     });
-
 }
