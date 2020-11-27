@@ -17,7 +17,7 @@ export let Router = function(options = {}) {
     }
     router.onHashChange = options.onHashChange || onHashChange;
     
-    router.__onHashChange - function() { 
+    router.__onHashChange = function() { 
         let hash = location.hash || '#';
         
         let path = router.paths.find(path => {
@@ -25,17 +25,17 @@ export let Router = function(options = {}) {
         });
         let value = path ? path.value : null;
 
-        let urlArgs = router.getURLParams(hash);
+        let urlArgs = router.getSearchParams(location.search);
         router.onHashChange(hash, value, urlArgs);
     }
 
-    router.getURLParams = function(hash) { 
-        let args = location.search;
-        if(!args) { return null; }
+    router.getSearchParams = function(search) { 
+        if(!search) { return null; }
 
-        let params = new URLSearchParams(args);
+        let params = new URLSearchParams(search);
+        
         let objParams = {};
-        for(let k in params.keys()) {
+        for(const k of params.keys()) {
             objParams[k] = params.get(k);
         }
         
@@ -44,14 +44,12 @@ export let Router = function(options = {}) {
 
     router.addPath = function(hash, value) {
         if(hash instanceof RegExp) { 
-            _router.paths.push({ pattern : hash, value : value });
+            router.paths.push({ pattern : hash, value : value });
         }
         if(typeof(hash) !== 'string') { return; }
-
         let pattern = router.getHashRegex(hash);
-        
-        _router.paths.push({ pattern : pattern, value : value });
-        return _router.paths;
+        router.paths.push({ pattern : pattern, value : value });
+        return router.paths;
     }
 
     router.getHashRegex = function(hash) { 
@@ -65,14 +63,14 @@ export let Router = function(options = {}) {
 
     router.addPaths = function(paths) { 
         for(let p in paths) {
-            _router.addPath(p, paths[p]);
+            router.addPath(p, paths[p]);
         }
-        return _router.paths;
+        return router.paths;
     }
 
     window.onhashchange = router.__onHashChange;
-    if(options.onHashChange) { window.onhashchange(); }
-    if(options.paths) { router.addPath(paths); }
+    if(options.paths) { router.addPaths(options.paths); }
+    return router;
 }
 
 
