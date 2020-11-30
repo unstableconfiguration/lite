@@ -24,10 +24,23 @@
     <div id='content' class='site-content'>
         <div id='demo-text'></div>
         <div>
-            <pre class='language-javascript'>
-                <code id='demo-code'></code>
-            </pre>
+            <pre class='language-javascript'><code id='demo-code'></code></pre>
         </div>
+
+        <div id='xhr-text'>lite.xhr is a XMLHttpRequest utility. It focuses on adding 
+            syntactic sugar to, but not obscuring the underlying XMLHttpRequest. In the below 
+            example, we create and send a XMLHttpRequest using a promise-like syntax. 
+        </div>
+        <div>
+            <pre class='language-javascript'><code id='xhr-code'></code></pre>
+        </div>
+
+        <div id='router-text'></div>
+        <div>
+            <pre class='language-javascript'><code id='router-code'></code></pre>
+        </div>
+
+        <div id='spacer' style='height:250px;'></div>
     </div>
 </body>
 
@@ -48,6 +61,7 @@
         });
         new contentView().attach(document.getElementById('demo-text'));
         
+        window.lite = lite;
         let codeView = lite.extend({
             // .toString cuts off the variable declaration, so we add it back in for clarity
             content : '    let demoJS = ' + demoJS.toString(),
@@ -57,8 +71,20 @@
         });
         new codeView().attach(document.getElementById('demo-code'));
     }
-
     demoJS();
+
+    })();
+
+    (()=>{
+        let xhrCode = document.getElementById('xhr-code');
+        xhrCode.innerHTML = `   let request = lite.xhr.get('../site/demo.md')
+        .then(responseText => {
+            console.log(responseText);
+        })
+        .catch(error => { 
+            console.log('something went wrong');
+        });`
+        eval(xhrCode.innerHTML.replace(/(&gt;)/g, '>'));   
     })();
 
 </script>
