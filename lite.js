@@ -50,14 +50,14 @@ export let Lite = function(args={}){
     }
 
     _lite._loadContent = function() { 
-        if(_lite.contentUrl)
+        if(_lite.contentUrl) {
             return _lite.xhr.get(_lite.contentUrl)
                 .then(r => _lite.setContent(r))
                 .catch(e => { 
                     throw('Error when fetching resource ' + _lite.contentUrl);
                 });
-        else if (_lite.content) { _lite.setContent(_lite.content); }
-        if(!_lite.content) { throw(new Error(`no content or content url for template`)); } 
+        }
+        else if (_lite.content) { return _lite.setContent(_lite.content); }
     }
 
     _lite._bindContent = function(){
