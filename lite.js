@@ -89,13 +89,27 @@ export let Lite = function(args={}){
         css.href = uri;
        
         let links = document.getElementsByTagName('link');
-        let has = Array.from(links).some((link) => { 
-            return link.href === css.href;
+        let hasLink = Array.from(links).some((link) => { 
+            return link.href == css.href;
         });
-        if(has) { return; }
+        if(hasLink) { return; }
   
         let head = document.getElementsByTagName('head')[0];
         head.appendChild(css);
+    }
+
+    _lite.loadScript = function(uri) {
+        let script = document.createElement('script');
+        script.src = uri;
+
+        let scripts = document.getElementsByTagName('script');
+        let hasScript = Array.from(scripts).some((s) => {
+            return s.src == script.src;
+        });
+        if(hasScript) { return; }
+
+        let head = document.getElementsByTagName('head')[0];
+        head.appendChild(script);
     }
 
     /* When Lite or any derived class is instantiated, the args 

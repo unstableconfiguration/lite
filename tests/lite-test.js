@@ -132,9 +132,26 @@ export let LiteTest = function() {
                 });
                 assert(has);
             });
-            it('should load a script file if loadScript is called');
+            it('should load a script file if loadScript is called', function() { 
+                let view = lite.extend({
+                    content : 'a',
+                    initialize : function() { 
+                        this.loadScript('../tests/lite-test/lite-test-script.js');
+                    }
+                });
+                new view().attach();
+                let script = document.createElement('script');
+                script.src = '../tests/lite-test/lite-test-script.js';
+
+                let scripts = Array.from(document.getElementsByTagName('script'));
+                let hasScript = scripts.some(scr => {
+                    return scr.src == script.src;
+                });
+                assert(hasScript);
+            });
         });
 
+        
 
     });
 }
