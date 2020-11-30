@@ -58,9 +58,6 @@
     font-style:italic
 }
 
-.site-content p {
-    white-space: pre-line;
-}
 
 .site-content code {
     display:block;
