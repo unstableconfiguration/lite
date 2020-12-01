@@ -29,7 +29,10 @@ export let Router = function(options = {}) {
         });        
         let value = path ? path.value : null;
 
-        let urlArgs = router.getSearchParams(location.search);
+        let search = /\?.+$/.exec(hash);
+        search = search ? search[0] : location.search;
+        let urlArgs = router.getSearchParams(search);
+        
         onHashChange(hash, value, urlArgs);
     }
     router.onHashChange = options.onHashChange || onHashChange;
