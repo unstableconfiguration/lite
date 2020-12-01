@@ -1,10 +1,11 @@
 # Lite
-Lite is a utility for building single page applications. It creates views that load and pair .html templates and .json data sources. I have written it mostly as an education project, but have used it to build my personal site. It is lightweight both in terms of being only a couple kilobytes in size, and in terms of having very minimalist features. 
+Lite is a utility suite for building single page applications. From a MVC standpoint, it can create a controller that loads a text/html template and binds it to a HTML element, while exposing event lifecycle hooks that allow for loading and binding data. It also contains a router utility that allows for control over changes to the window hash. 
+
 
 ## Example Usage
 
 ```
-    let view = lite.extend({
+    let controller = lite.extend({
         // Content can be provided as a html string
         content : '<div id="exampleDiv"></div>'
         // Content can be loaded by url
@@ -37,14 +38,13 @@ Lite is a utility for building single page applications. It creates views that l
         // Executes after onContentBound and onDataLoaded
         , onDataBound : function(data){
             console.log('3', 'data bound', data);
-        }
-        
+        }   
     });
 
     let container = document.createElement('div');
     document.body.appendChild(container);
 
-    new view().attach(container);
+    new controller().attach(container);
 ```
 
 ## Public functions
@@ -69,8 +69,8 @@ The view lifecycle contains several events that can be overridden to execute cus
 HTML elements in the content can be given a 'bind' attribute. If the value for bind matches a property in the data, the element's .value or .innerHTML will be set to the value from the data for that property. 
 
 ```
-let view = lite.extend({
-    content : "<span id='spanMessage' bind='message'></span>",
+let controller = lite.extend({
+    content : "<span id='spanMessage' data-field='message'></span>",
     data : { message : 'hi!' },
     onDataBound : function() { 
         let span = document.getElementById('spanMessage');
@@ -79,7 +79,7 @@ let view = lite.extend({
 });
 let container = document.createElement('div');
 document.body.appendChild(container);
-new view().attach(container);
+new controller().attach(container);
 ```
 
 
