@@ -23,8 +23,16 @@
         <pre class='language-javascript'><code id='liteCode'></code></pre>
 
         <p><h3>xhr</h3></p>
-        <p>XHR is a XMLHttpRequest utility included with the lite framework and used by it for loading content. </p>
+        <p>XHR is a XMLHttpRequest utility included with the lite framework and 
+            used by it for loading content. Similar to jQuery's ajax, it converts a request into 
+            a promise-like thennable allowing for simplified syntax.</p>
         <pre class='language-javascript'><code id='xhrCode'></code></pre>
+
+        <p><h3>router</h3></p>
+        <p>Router is a utility for attaching events to the window hash. The dev can supply a collection 
+            of paths and a onHashChange callback. 
+        </p>
+        <pre class='language-javascript'><code id='routerCode'></code></pre>
 
         <div id='filler' style='height:200px'></div>
     </div>
@@ -45,6 +53,11 @@
 
         fetchCode('../xhr.js', (text) => {
             document.getElementById('xhrCode').innerHTML = 
+                Prism.highlight(text, Prism.languages.javascript, 'javascript');
+        });
+
+        fetchCode('../router.js', (text) => {
+            document.getElementById('routerCode').innerHTML = 
                 Prism.highlight(text, Prism.languages.javascript, 'javascript');
         });
 
