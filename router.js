@@ -12,22 +12,28 @@ export let Router = function(options = {}) {
         args: URLSearchParams in object form. 
             example: ?key1=val1&key2=val2 gets converted to { key1 : val1, key2 : val2 }
     */
-    let onHashChange = function(hash, pathValue, args) {
-        throw('lite.router.onHashChange not set')
-    }
-    router.onHashChange = options.onHashChange || onHashChange;
-    
+    let onHashChange = function(hash, pathValue, args) { }
+    Object.defineProperty(router, 'onHashChange', {
+        get : function() { return onHashChange; },
+        set : function(val) { 
+            onHashChange = val;
+            window.onhashchange = router.__onHashChange;
+        }
+    });
+
     router.__onHashChange = function() { 
         let hash = location.hash || '#';
         
         let path = router.paths.find(path => {
             return path.pattern.test(hash);
-        });
+        });        
         let value = path ? path.value : null;
 
         let urlArgs = router.getSearchParams(location.search);
-        router.onHashChange(hash, value, urlArgs);
+        onHashChange(hash, value, urlArgs);
     }
+    router.onHashChange = options.onHashChange || onHashChange;
+    
 
     router.getSearchParams = function(search) { 
         if(!search) { return null; }
@@ -42,13 +48,16 @@ export let Router = function(options = {}) {
         return objParams;
     }
 
-    router.addPath = function(hash, value) {
-        if(hash instanceof RegExp) { 
-            router.paths.push({ pattern : hash, value : value });
+    /*
+        path : { hash : '', value : any }
+    */
+    router.addPath = function(path) {
+        if(path.hash instanceof RegExp) { 
+            router.paths.push({ pattern : path.hash, value : path.value });
         }
-        if(typeof(hash) !== 'string') { return; }
-        let pattern = router.getHashRegex(hash);
-        router.paths.push({ pattern : pattern, value : value });
+        if(typeof(path.hash) !== 'string') { return; }
+        let pattern = router.getHashRegex(path.hash);
+        router.paths.push({ pattern : pattern, value : path.value });
         return router.paths;
     }
 
@@ -61,14 +70,16 @@ export let Router = function(options = {}) {
         return pattern;
     }
 
+    /*
+        paths = [path, path]
+    */
     router.addPaths = function(paths) { 
         for(let p in paths) {
-            router.addPath(p, paths[p]);
+            router.addPath(paths[p]);
         }
         return router.paths;
     }
 
-    window.onhashchange = router.__onHashChange;
     if(options.paths) { router.addPaths(options.paths); }
     return router;
 }

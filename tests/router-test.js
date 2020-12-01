@@ -19,14 +19,16 @@ export let RouterTest = function() {
                 onHashChange : function(hash, value) {
                     value();
                 },
-                paths : { 
-                    'test/path' : function() { 
-                        done();
-                        window.onhashchange = null;
-                        window.location.hash = ''; 
-                    } 
-                }
-                
+                paths : [
+                    { 
+                        hash : 'test/path', 
+                        value : function() { 
+                            done();
+                            window.onhashchange = null;
+                            window.location.hash = '';
+                        } 
+                    }
+                ]
             });
             window.location.hash = 'test/path';
             window.onhashchange();
