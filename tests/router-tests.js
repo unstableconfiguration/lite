@@ -1,6 +1,6 @@
-import { Router } from '../router.js';
+import { Router } from '../src/router.js';
 
-export let RouterTest = function() {
+export let RouterTests = function() {
     let assert = chai.assert;
     describe('Router Tests', function() { 
         it('should trigger custom onHashChange event when window hash changes', function(done) { 

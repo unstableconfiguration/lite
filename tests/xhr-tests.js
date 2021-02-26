@@ -1,6 +1,6 @@
-import { XHR, xhr } from '../xhr.js';
+import { XHR, xhr } from '../src/xhr.js';
 
-export let XHRTest = function() {
+export let XHRTests = function() {
     let assert = chai.assert;
 
     describe('XHR tests', function() { 

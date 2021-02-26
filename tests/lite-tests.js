@@ -1,6 +1,6 @@
-import { lite } from '../lite.js';
+import { lite } from '../src/lite.js';
 
-export let LiteTest = function() { 
+export let LiteTests = function() { 
     let assert = chai.assert;
 
     describe('Lite Tests', function() { 
