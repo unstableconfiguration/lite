@@ -46,17 +46,19 @@
             });
         }
 
-        fetchCode('../lite.js', (text) => {
+        let raws = 'https://raw.githubusercontent.com/unstableconfiguration/Lite/master/';
+
+        fetchCode(raws + 'src/lite.js', (text) => {
             document.getElementById('liteCode').innerHTML = 
                 Prism.highlight(text, Prism.languages.javascript, 'javascript');
         });
 
-        fetchCode('../xhr.js', (text) => {
+        fetchCode(raws + 'src/xhr.js', (text) => {
             document.getElementById('xhrCode').innerHTML = 
                 Prism.highlight(text, Prism.languages.javascript, 'javascript');
         });
 
-        fetchCode('../router.js', (text) => {
+        fetchCode(raws + 'src/router.js', (text) => {
             document.getElementById('routerCode').innerHTML = 
                 Prism.highlight(text, Prism.languages.javascript, 'javascript');
         });
