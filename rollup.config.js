@@ -11,14 +11,14 @@ export default [
     {
         input : 'tests/tests-index.js',
         output : {
-            file : 'dist/lite-tests.js',
+            file : 'gh-pages/scripts/lite-tests.js',
             format : 'es'
         },
         plugins: [
             copy({
                 targets: [
-                    { src: 'tests/lite-test/*', dest: 'dist/lite-test' },
-                    { src: 'tests/xhr-test/*', dest: 'dist/xhr-test' }     
+                    { src: 'tests/lite-test/*', dest: 'gh-pages/scripts/lite-test' },
+                    { src: 'tests/xhr-test/*', dest: 'gh-pages/scripts/xhr-test' }     
                 ]
             })
         ]
