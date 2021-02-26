@@ -1,2 +1,3 @@
 deploy/lite.js
 dist/
+node_modules/
