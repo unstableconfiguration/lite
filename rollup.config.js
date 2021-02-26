@@ -6,7 +6,14 @@ export default [
         output: {
             file: 'dist/lite.js',
             format: 'es'
-        }
+        },
+        plugins : [
+            copy({
+                targets : [
+                    { src: 'dist/lite.js', dest : 'gh-pages/scripts' }
+                ]
+            })
+        ]
     },
     {
         input : 'tests/tests-index.js',
