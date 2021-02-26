@@ -24,13 +24,11 @@
 </body>
 <script>mocha.setup('bdd');</script>
 <script type='module'>
-    import { LiteTest } from '../tests/lite-test.js';
-    import { XHRTest } from '../tests/xhr-test.js';
-    import { RouterTest } from '../tests/router-test.js';
+    import { LiteTests, XHRTests, RouterTests } from '../tests/lite-tests.js';
 
-    LiteTest();
-    XHRTest();
-    RouterTest();
+    LiteTests();
+    XHRTests();
+    RouterTests();
     mocha.run();
 </script>
 
