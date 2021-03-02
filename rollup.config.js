@@ -1,4 +1,6 @@
+import babel from '@rollup/plugin-babel';
 import copy from 'rollup-plugin-copy'
+import del from 'rollup-plugin-delete';
 
 export default [
     {
@@ -8,6 +10,8 @@ export default [
             format: 'es'
         },
         plugins : [
+            del({ targets: 'dist/*' }),
+            babel({ babelHelpers: 'bundled' }),
             copy({
                 targets : [
                     { src: 'dist/lite.js', dest : 'gh-pages/scripts' }
