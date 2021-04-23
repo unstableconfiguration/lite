@@ -30,33 +30,48 @@ new view().attach();
 ```
 <div id='extend-demo'></div>
 
-
 ## .container 
 Each lite view needs a container element to attach to. The container can be defined either as part of the .extend({}) parameter object, or as a parameter to the .attach() function. In either case, the container can be a reference to an HTMLElement, or it can be an id to look up the element with. 
 
 ```javascript
 let view = lite.extend({
-    // Container can be set in the .extend object
-    container : document.getElementById('container-demo-1') || 'container-demo-1',
-    content : '<b>Container demo 1</b>'
+    // Container can be set in the .extend object. It can be an ID or an HTMLElement
+    container : document.getElementById('container-demo') || 'container-demo',
+    content : '<b>Container demo</b>'
+});
+
+// Container can also be a parameter of .attach(container); */
+new view().attach('container-demo-1');
+```
+<div id='container-demo'></div>
+
+## .content 
+.content represents what will become the .innerHTML value of the .container. Typically it will be some form of stringified HTML, but there are no limitations on it.
+
+```javascript
+let view = lite.extend({
+    container : 'content-demo',
+    content : '<div><span style="background:#555; color:#fff;">HTML content: </span><span style="border:solid thin #555; padding:0em .2em;">Typical content will be a HTML string</span></div>'
 });
 
 new view().attach();
 ```
-<div id='container-demo-1'></div>
-
-
-```javascript
-let view = lite.extend({ content : '<b>Container demo 2</b>' });
-// The container can be set via .attach(container);
-new view().attach('container-demo-2' || document.getElementById('container-demo-2'));
-```
-<div id='container-demo-2'></div>
-
-## .content 
-
+<div id='content-demo'></div>
 
 ## .contentUrl
+An alternative to setting content is setting a .contentUrl. In this case, the text of the specified file will be loaded via XMLHttpRequest.
+
+```javascript
+let view = lite.extend({
+    container : 'contentUrl-demo',
+    // We can load the markdown source for this page.
+    contentUrl : './documentation.md'
+});
+
+new view().attach();
+```
+<div id='contentUrl-demo' style='max-height:100px; overflow:scroll;'></div>
+
 
 ## .bindData()
 
