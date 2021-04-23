@@ -5,18 +5,19 @@ import del from 'rollup-plugin-delete';
 export default [
     {
         input: 'src/lite.js',
-        output: {
-            file: 'dist/lite.js',
-            format: 'es'
-        },
+        output: [
+            {
+                file: 'dist/lite.js',
+                format: 'es'
+            },
+            {
+                file: 'gh-pages/scripts/lite.js',
+                format: 'es'
+            }
+        ],
         plugins : [
             del({ targets: 'dist/*' }),
             babel({ babelHelpers: 'bundled' }),
-            copy({
-                targets : [
-                    { src: 'dist/lite.js', dest : 'gh-pages/scripts' }
-                ]
-            })
         ]
     },
     {
