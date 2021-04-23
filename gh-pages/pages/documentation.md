@@ -72,12 +72,24 @@ new view().attach();
 ```
 <div id='contentUrl-demo' style='max-height:100px; overflow:scroll;'></div>
 
+## .setContent(content = '');
+Content can be explicitly set via the .setContent() function. Doing so will trigger the normal view lifecycle.
 
-## .bindData()
 
-## .setContent()
+```javascript
+let view = lite.extend({
+    onContentLoaded : function(content) { this.content = marked(content); },
+});
+view = new view();
+view.attach('setContent-demo')
+
+view.setContent('**Setting via .setContent**: Content is set and view lifecycle is triggered');
+```
+<div id='setContent-demo'></div>
 
 ## .setData()
+
+## .bindData()
 
 ## view lifecycle
 
