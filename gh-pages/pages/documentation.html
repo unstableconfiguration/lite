@@ -30,36 +30,17 @@
             <div id='docs-left'>
                 <div id='docs-left-nav'></div>
             </div>
-            <div id='docs'></div>
+            <div id='docs-right'></div>
         </div>
     </div>
 </body>
 
 <script type='module'>
-    import { Lite, lite } from '../scripts/lite.js';
-
-    const colorizeCodeBlocks = function() { 
-        Array.from(document.getElementsByTagName('code'))
-            .forEach(code => {
-                Prism.highlightElement(code);
-            });
-    }
-
-    const executeCodeSnippets = function(md) { 
-        let codes = /```[^`]*```/g;
-        let code = '';
-        while(code = codes.exec(md)) {
-            if(code[0].substr(0, 7) === '```html') { continue; }
-            code = code[0]
-                .replace(/```javascript/, "```")
-                .replace(/```/g, "");
-            eval(code);
-        }
-    }
+    import { lite } from '../scripts/lite.js';
 
     const buildLeftNavigation = function() { 
         let leftNav = document.getElementById('docs-left-nav');
-        let headers = document.getElementById('docs')
+        let headers = document.getElementById('docs-right')
             .querySelectorAll('h1, h2');
         Array.from(headers).forEach(header => {
             // Set the id for our hash navigation
@@ -77,14 +58,39 @@
         });
     }
 
-    fetch('./documentation.md').then(response => { 
-        response.text().then(md => {
-            docs.innerHTML = marked(md);
 
-            colorizeCodeBlocks();
-            executeCodeSnippets(md);
+    let view = lite.extend({
+        container : 'docs-right',
+        contentUrl : './documentation.md',
+        onContentLoaded : function(markdown) { 
+            this.markdown = markdown;
+            this.content = marked(markdown);
+        },
+        onContentBound : function(content) {
+            this.executeCodeSnippets(this.markdown);
+            this.colorize();
             buildLeftNavigation();
-        });
+        },
+        executeCodeSnippets : function(markdown) { 
+            let codes = /```[^`]*```/g; 
+            let code = '';
+            while(code = codes.exec(markdown)) {
+                // Only execute code designated as javascript
+                if(code[0].substr(0, 7) !== '```java') { continue; }
+                code = code[0]
+                    .replace(/^```javascript/, "")
+                    .replace(/```$/, "");
+                eval(code);
+            }
+        },
+        colorize : function() {
+            Array.from(document.getElementsByTagName('code'))
+                .forEach(code => {
+                    Prism.highlightElement(code);
+                });
+        }
     });
+
+    new view().attach();
 </script>
 
