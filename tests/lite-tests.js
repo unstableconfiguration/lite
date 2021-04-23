@@ -94,6 +94,22 @@ export let LiteTests = function() {
                 view.attach();
             });
 
+            it('should getElementById if container is an id string', function(done) {
+                let div = document.createElement('div');
+                div.id = 'container-attach-test';
+                div.style.display = 'none';
+                document.body.appendChild(div);
+
+                let view = lite.extend({
+                    container: 'container-attach-test',
+                    content : 'test',
+                    onContentBound : function() { 
+                        assert(document.getElementById('container-attach-test').innerHTML == 'test')
+                        done();
+                    }
+                });
+                new view().attach();
+            });
         });
 
         describe('Data binding', function() { 

@@ -226,6 +226,10 @@ var Lite = function Lite() {
 
     _lite.onContentLoaded(_lite.content);
 
+    if (typeof _lite.container === 'string') {
+      _lite.container = document.getElementById(_lite.container);
+    }
+
     if (_lite.container) {
       _lite._bindContent(_lite.content);
 

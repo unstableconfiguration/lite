@@ -189,6 +189,9 @@ let Lite = function(args={}){
     _lite.setContent = function(content) {
         _lite.content = content;
         _lite.onContentLoaded(_lite.content);
+        if(typeof(_lite.container) === 'string') {
+            _lite.container = document.getElementById(_lite.container);
+        }
         if(_lite.container) { 
             _lite._bindContent(_lite.content); 
             _lite.__isContentBound = true;
@@ -393,6 +396,22 @@ let LiteTests = function() {
                 view.attach();
             });
 
+            it('should getElementById if container is an id string', function(done) {
+                let div = document.createElement('div');
+                div.id = 'container-attach-test';
+                div.style.display = 'none';
+                document.body.appendChild(div);
+
+                let view = lite.extend({
+                    container: 'container-attach-test',
+                    content : 'test',
+                    onContentBound : function() { 
+                        assert(document.getElementById('container-attach-test').innerHTML == 'test');
+                        done();
+                    }
+                });
+                new view().attach();
+            });
         });
 
         describe('Data binding', function() { 

@@ -23,6 +23,9 @@ export let Lite = function(args={}){
     _lite.setContent = function(content) {
         _lite.content = content;
         _lite.onContentLoaded(_lite.content);
+        if(typeof(_lite.container) === 'string') {
+            _lite.container = document.getElementById(_lite.container);
+        }
         if(_lite.container) { 
             _lite._bindContent(_lite.content); 
             _lite.__isContentBound = true;
