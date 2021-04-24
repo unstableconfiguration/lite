@@ -28,26 +28,14 @@ export let Lite = function(args={}){
         }
         if(_lite.container) { 
             _lite._bindContent(_lite.content); 
-            _lite.__isContentBound = true;
         }
-        if(_lite.__isDataSet) { _lite.bindData(_lite.data); }
     }
 
-    /* setData
-        Explicitly kick off the data loading and binding process
-    */
-    _lite.setData = function(data) { 
-        _lite.data = data;
-        _lite.__isDataSet = true;
-        if(_lite.__isContentBound) { _lite.bindData(_lite.data); }
-    }
-   
     /* Attach
         Kicks off the view lifecycle of loading and binding. 
     */
     _lite.attach = function(container) {
         if(container) { _lite.container = container; }
-        if(_lite.data) { _lite.setData(_lite.data); }
         
         _lite._loadContent();
     }
@@ -69,16 +57,19 @@ export let Lite = function(args={}){
                 _lite.container.removeChild(_lite.container.firstChild);
             _lite.container.insertAdjacentHTML('afterbegin', _lite.content);
             _lite.onContentBound(_lite.content);
+
+            if(_lite.data) { _lite.bindData(); }
         }
         else { throw(new Error(`no container or no content for template`)); }
     }
     
     _lite.bindData = function(data) {
+        data = data || _lite.data;
         _lite.container.querySelectorAll('[data-field]')
             .forEach((el)=>{
                 let prop = el.getAttribute('data-field') || el.id;
-                let val = prop.split('.').reduce((acc, p)=>{ return acc[p]; }, data)
-                if(typeof(el.value) !== 'undefined') el.value = val;
+                let val = prop.split('.').reduce((acc, p) => { return acc[p]; }, data)
+                if(typeof(el.value) !== 'undefined') { el.value = val; }
                 else el.innerHTML = val;
             });
 
