@@ -170,10 +170,33 @@ new view().attach();
 <div id='bindData-demo'></div>
 
 ## .loadStyleSheet(path)
+loadStyleSheet is a utility that can be used to add a .css link to the header. It accepts a string parameter that will become the 'href' value of the link. It won't do anything if a link already exists with that href. 
+
+```javascript
+let view = lite.extend({
+    initialize : function() { 
+        this.loadStyleSheet('../css/vendor/prism.css');
+    }
+});
+```
+Will add a link like this to the header: 
+```html
+<link rel="stylesheet" type="text/css" href="../css/vendor/prism.css">
+```
 
 ## .loadScript(path)
-
-
+loadScript is a utility that can be used to add a script tag to the header. It accepts a string parameter that will become the 'src' value of the tag. It won't do anything if a script already exists with that src.
+```javascript
+let view = lite.extend({
+    initialize : function() { 
+        this.loadScript('../scripts/vendor/prism.js');
+    }
+});
+```
+Will add a script link like this to the header:
+```html
+<script src="../scripts/vendor/prism.js"></script>
+```
 
 # Router
 
