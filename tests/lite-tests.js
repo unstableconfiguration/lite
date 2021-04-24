@@ -54,18 +54,6 @@ export let LiteTests = function() {
                 assert(view.content == 3);
                 done();
             });
-
-            it('should call bindData after setData is called and content is bound', function(done) { 
-                let view = lite.extend({
-                    content : '<div data-field="test"></div>',
-                    bindData : function(data) { assert(data == 1); this.data = 2; }
-                });
-                view = new view()
-                view.attach(document.createElement('div'));
-                view.setData(1);
-                assert(view.data == 2);
-                done();
-            });
         });
 
         describe('Content loading and binding', function() { 
