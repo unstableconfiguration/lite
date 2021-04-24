@@ -101,21 +101,56 @@ export let LiteTests = function() {
         });
 
         describe('Data binding', function() { 
-            it('should bind data using the data-field attribute', function(done) { 
+            // data binding: 
+                // should match on data-field
+                // should work recursively if dot-notation is used 
+                // should match on id if data field is empty
+
+            it('bind data value to element if data-field matches property name', function(done){
                 let view = lite.extend({
-                    contentUrl : '../tests/lite-test/lite-test.html',
-                    data : { testField : 'testing' },
-                    container : document.createElement('div'),
-                    onDataBound : function(data) {
-                        assert(data.testField == 'testing');
-                        let span = this.container.firstChild.firstElementChild;
-                        assert(span.innerHTML == 'testing');
+                    content : '<span data-field="bindTest"></span>',
+                    data : { bindTest : 'testing' },
+                    onDataBound : function() { 
+                        assert(this.container.firstChild.innerHTML == 'testing');
                         done();
                     }
                 });
-                view = new view();
-                view.attach();
+                new view().attach(document.createElement('div'));
             });
+
+            it('should bind data value to element if data-field is empty and id matches property name', function(done) {
+                let view = lite.extend({
+                    content : '<span data-field id="bindTest"></span>',
+                    data : { bindTest : 'testing' },
+                    onDataBound : function() { 
+                        assert(this.container.firstChild.innerHTML == 'testing');
+                        done();
+                    }
+                });
+                new view().attach(document.createElement('div'));
+            });
+
+            it('should find nested data if data-field uses dot-notation', function(done) { 
+                let view = lite.extend({
+                    content : '<span data-field="outer.inner"></span>',
+                    data : { outer : { inner : 'testing' } },
+                    onDataBound : function() { 
+                        assert(this.container.firstChild.innerHTML == 'testing');
+                        done();
+                    }
+                });
+                new view().attach(document.createElement('div'));
+            });
+
+            it('should call .onDataBound() after .bindData()', function(done) {
+                let view = lite.extend({
+                    content : '<span></span>',
+                    onContentBound : function() { this.bindData({ data : 1 }); },
+                    onDataBound : function() { done(); }
+                });
+                new view().attach(document.createElement('div'));
+            });
+
         });
 
         describe('Script and Stylesheet loading', function() {

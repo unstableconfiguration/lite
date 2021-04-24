@@ -194,26 +194,14 @@ let Lite = function(args={}){
         }
         if(_lite.container) { 
             _lite._bindContent(_lite.content); 
-            _lite.__isContentBound = true;
         }
-        if(_lite.__isDataSet) { _lite.bindData(_lite.data); }
     };
 
-    /* setData
-        Explicitly kick off the data loading and binding process
-    */
-    _lite.setData = function(data) { 
-        _lite.data = data;
-        _lite.__isDataSet = true;
-        if(_lite.__isContentBound) { _lite.bindData(_lite.data); }
-    };
-   
     /* Attach
         Kicks off the view lifecycle of loading and binding. 
     */
     _lite.attach = function(container) {
         if(container) { _lite.container = container; }
-        if(_lite.data) { _lite.setData(_lite.data); }
         
         _lite._loadContent();
     };
@@ -235,16 +223,19 @@ let Lite = function(args={}){
                 _lite.container.removeChild(_lite.container.firstChild);
             _lite.container.insertAdjacentHTML('afterbegin', _lite.content);
             _lite.onContentBound(_lite.content);
+
+            if(_lite.data) { _lite.bindData(); }
         }
         else { throw(new Error(`no container or no content for template`)); }
     };
     
     _lite.bindData = function(data) {
+        data = data || _lite.data;
         _lite.container.querySelectorAll('[data-field]')
             .forEach((el)=>{
                 let prop = el.getAttribute('data-field') || el.id;
-                let val = prop.split('.').reduce((acc, p)=>{ return acc[p]; }, data);
-                if(typeof(el.value) !== 'undefined') el.value = val;
+                let val = prop.split('.').reduce((acc, p) => { return acc[p]; }, data);
+                if(typeof(el.value) !== 'undefined') { el.value = val; }
                 else el.innerHTML = val;
             });
 
@@ -356,18 +347,6 @@ let LiteTests = function() {
                 assert(view.content == 3);
                 done();
             });
-
-            it('should call bindData after setData is called and content is bound', function(done) { 
-                let view = lite.extend({
-                    content : '<div data-field="test"></div>',
-                    bindData : function(data) { assert(data == 1); this.data = 2; }
-                });
-                view = new view();
-                view.attach(document.createElement('div'));
-                view.setData(1);
-                assert(view.data == 2);
-                done();
-            });
         });
 
         describe('Content loading and binding', function() { 
@@ -415,21 +394,56 @@ let LiteTests = function() {
         });
 
         describe('Data binding', function() { 
-            it('should bind data using the data-field attribute', function(done) { 
+            // data binding: 
+                // should match on data-field
+                // should work recursively if dot-notation is used 
+                // should match on id if data field is empty
+
+            it('bind data value to element if data-field matches property name', function(done){
                 let view = lite.extend({
-                    contentUrl : '../tests/lite-test/lite-test.html',
-                    data : { testField : 'testing' },
-                    container : document.createElement('div'),
-                    onDataBound : function(data) {
-                        assert(data.testField == 'testing');
-                        let span = this.container.firstChild.firstElementChild;
-                        assert(span.innerHTML == 'testing');
+                    content : '<span data-field="bindTest"></span>',
+                    data : { bindTest : 'testing' },
+                    onDataBound : function() { 
+                        assert(this.container.firstChild.innerHTML == 'testing');
                         done();
                     }
                 });
-                view = new view();
-                view.attach();
+                new view().attach(document.createElement('div'));
             });
+
+            it('should bind data value to element if data-field is empty and id matches property name', function(done) {
+                let view = lite.extend({
+                    content : '<span data-field id="bindTest"></span>',
+                    data : { bindTest : 'testing' },
+                    onDataBound : function() { 
+                        assert(this.container.firstChild.innerHTML == 'testing');
+                        done();
+                    }
+                });
+                new view().attach(document.createElement('div'));
+            });
+
+            it('should find nested data if data-field uses dot-notation', function(done) { 
+                let view = lite.extend({
+                    content : '<span data-field="outer.inner"></span>',
+                    data : { outer : { inner : 'testing' } },
+                    onDataBound : function() { 
+                        assert(this.container.firstChild.innerHTML == 'testing');
+                        done();
+                    }
+                });
+                new view().attach(document.createElement('div'));
+            });
+
+            it('should call .onDataBound() after .bindData()', function(done) {
+                let view = lite.extend({
+                    content : '<span></span>',
+                    onContentBound : function() { this.bindData({ data : 1 }); },
+                    onDataBound : function() { done(); }
+                });
+                new view().attach(document.createElement('div'));
+            });
+
         });
 
         describe('Script and Stylesheet loading', function() {
