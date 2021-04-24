@@ -97,15 +97,57 @@ view.setContent('**Setting via .setContent**: Content is set and view lifecycle 
 ```
 <div id='setContent-demo'></div>
 
-## .data
+## view lifecycle
+There are several events in the view lifecycle that execute in order and can allow for customization of the view as it is being built up.
 
-## data binding
+#### initialize(): 
+* executes immediately after .attach() is called  
+* can be used to kick off asynchronous events or define constants
 
-## .setData()
+#### onContentLoaded(content)
+* executes immediately if .content is defined  
+* executes after content is loaded if .contentUrl is defined  
+* executes immediately after .bindContent is called  
+* can be used to manipulate content before it has been bound 
+
+#### onContentBound(content)
+* executes after .container.innerHTML has been populated with .content
+* executes after onContentLoaded  
+* can be used to modify the container after content has been bound or to perform cleanup
+
+#### onDataBound(data)
+* executes automatically after onContentBound if .data is defined  
+* executes after .bindData is called
+* can be used to modify the container after data has been bound
+
+```javascript
+let view = lite.extend({
+    container : 'lifecycle-demo',
+    content : '',
+    data : {},
+    initialize : function() { 
+        this.content += '<span style="color:white; background:#555; padding:.2em;">1.</span>' 
+    },
+    onContentLoaded : function(content) {
+        this.content += '<span style="color:white; background:#666; padding:.2em;">2.</span>';
+    },
+    onContentBound : function(content) { 
+        this.content = content + '<span style="color:white; background:#777; padding:.2em;">3.</span>';
+        this.container.innerHTML = this.content;
+    },
+    onDataBound : function(data) {
+        this.content = this.content + '<span style="color:white; background:#888; padding:.2em;">4.</span>';
+        this.container.innerHTML = this.content
+    }
+
+});
+
+new view().attach();
+```
+<div id='lifecycle-demo'></div>
 
 ## .bindData()
 
-## view lifecycle
 
 ## .loadStyleSheet(path)
 
