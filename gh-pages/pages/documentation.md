@@ -40,10 +40,20 @@ let view = lite.extend({
     content : '<b>Container demo</b>'
 });
 
-// Container can also be a parameter of .attach(container); */
-new view().attach('container-demo-1');
+new view().attach();
 ```
 <div id='container-demo'></div>
+
+## .attach();
+.attach() begins the view lifecycle, resulting in the content being bound to the container. The .container can be passed to .attach() as an optional parameter. 
+
+```javascript
+let view = lite.extend({ content : '<span style="background:#966; color:white; font-weight:bold;; padding:0 .2em;">Attach Test</span>' });
+
+// Just as with setting .container in the object, the parameter can be a HTMLElement or a id string.
+new view().attach('attach-demo');
+```
+<div id='attach-demo'></div>
 
 ## .content 
 .content represents what will become the .innerHTML value of the .container. Typically it will be some form of stringified HTML, but there are no limitations on it.
@@ -86,6 +96,10 @@ view.attach('setContent-demo')
 view.setContent('**Setting via .setContent**: Content is set and view lifecycle is triggered');
 ```
 <div id='setContent-demo'></div>
+
+## .data
+
+## data binding
 
 ## .setData()
 
