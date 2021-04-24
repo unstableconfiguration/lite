@@ -147,7 +147,27 @@ new view().attach();
 <div id='lifecycle-demo'></div>
 
 ## .bindData()
+.bindData(data) is a data binding utility that uses a 'data-field' custom attribute to populate HTML elements with data. It will be called automatically if .data is defined, but can be called explicitly otherwise. 
+If the data-field is set to a data property name, bindData will populate the element with that property value. If data field is left empty, bindData will use the element's id. If the data property is nested, dot.notation can be used to recursively load the property.
 
+```javascript
+let view = lite.extend({
+    container : 'bindData-demo',
+    content : '' +
+        '<div data-field="fieldA"></div>' +
+        '<input type="text" id="fieldB" data-field style="width:200px"></input>' +
+        '<div data-field="nested.field"></div>',
+    data : {
+        fieldA : 'data-field = property',
+        fieldB : 'data-field and id = property',
+        nested : { field : 'dot.notation for nested values' }
+    }
+
+});
+
+new view().attach();
+```
+<div id='bindData-demo'></div>
 
 ## .loadStyleSheet(path)
 
