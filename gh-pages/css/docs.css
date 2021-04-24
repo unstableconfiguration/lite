@@ -1,6 +1,7 @@
 #docs-container { 
     display:grid;
     grid-template-columns: 13em auto;
+    max-width:100%;
 }
 
 /* Container for left-nav */
@@ -41,15 +42,20 @@
     text-decoration: underline;
 }
 
-#docs { 
+#docs-right { 
     padding : 10px 0 0 10px;
-    width:90%;
+    width:60%;
 }
 
-#docs code {
+#docs-right pre { 
+    overflow-x:scroll;
+}
+
+#docs-right code {
     font-size: .8em;
     height: auto;
     resize: none;
     overflow-y:auto;
 }
+
 
