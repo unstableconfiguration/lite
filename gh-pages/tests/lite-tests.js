@@ -144,9 +144,21 @@ let Router = function(options = {}) {
         return router.paths;
     };
 
-    router.getHashRegex = function(hash) { 
-        hash = hash.replace(/{.+}/, '.+');
-        hash = hash.replace('/', '\/');
+    const escapeSpecialChars = function(hash) {
+        ['(', ')']
+            .forEach(specialChar => {
+                hash = hash.replace(specialChar, '\\' + specialChar);
+            });
+        return hash;
+    };
+
+    const escapeWildCard = function(hash) { 
+        return hash.replace(/{.+}/, '.+');
+    };
+
+    router.getHashRegex = function(hash) {
+        hash = escapeWildCard(hash);
+        hash = escapeSpecialChars(hash);
         /* hash to match #location/hash
             with ?optional=true&parameters=1*/
         let pattern = new RegExp('^\#' + hash + '(\\?.*)?$');
@@ -520,6 +532,14 @@ let RouterTests = function() {
             window.onhashchange = null;
             let parsed = router.getSearchParams("?key1=val1&key2=val2");
             assert(parsed.key1 == "val1");
+        });
+
+        it('should escape special characters', function() { 
+            let router = new Router(); 
+            window.onhashchange = null;
+            let pattern = router.getHashRegex('testing()');
+            window.pattern = pattern;
+            assert(pattern.test('#testing()'));
         });
 
         it('should convert a path string to a regex when getHashRegex is called', function() {
