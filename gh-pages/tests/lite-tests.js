@@ -119,7 +119,7 @@ let Router = function(options = {}) {
 
     router.getSearchParams = function(search = location.search) { 
         if(!search) {
-            search = /\?+$/.exec(location.hash);
+            search = /\?.+$/.exec(location.hash);
             if(search) { search = search[0]; }
         }
         if(!search) { return; }

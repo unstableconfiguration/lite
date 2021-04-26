@@ -129,7 +129,7 @@ var Router = function Router() {
     var search = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : location.search;
 
     if (!search) {
-      search = /\?+$/.exec(location.hash);
+      search = /\?.+$/.exec(location.hash);
 
       if (search) {
         search = search[0];
