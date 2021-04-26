@@ -29,17 +29,21 @@ export let Router = function(options = {}) {
         });        
         let value = path ? path.value : null;
 
-        let search = /\?.+$/.exec(hash);
-        search = search ? search[0] : location.search;
-        let urlArgs = router.getSearchParams(search);
+        let searchParams = router.getSearchParams();
         
-        onHashChange(hash, value, urlArgs);
+        onHashChange(hash, value, searchParams);
     }
     router.onHashChange = options.onHashChange || onHashChange;
     
+    
 
-    router.getSearchParams = function(search) { 
-        if(!search) { return null; }
+    router.getSearchParams = function(search = location.search) { 
+        if(!search) {
+            search = /\?+$/.exec(location.hash);
+            if(search) { search = search[0]; }
+        }
+        if(!search) { return; }
+        search = search.replace('&amp;', '&')
 
         let params = new URLSearchParams(search);
         

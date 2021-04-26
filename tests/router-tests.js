@@ -41,13 +41,22 @@ export let RouterTests = function() {
             assert(parsed.key1 == "val1");
         });
 
+        it('should convert "amp;" to "&" when location.hash is used', function() { 
+            let router = new Router();
+            window.onhashchange = null;
+            let parsed = router.getSearchParams("?key1=val1&amp;key2=val2");
+            assert(parsed.key2 == 'val2');
+        });
+
         it('should escape special characters', function() { 
             let router = new Router(); 
             window.onhashchange = null;
             let pattern = router.getHashRegex('testing()');
-            window.pattern = pattern;
             assert(pattern.test('#testing()'))
         });
+
+        // what else were we testing. 
+        // ah yeah, splitting params was converting & to amp
 
         it('should convert a path string to a regex when getHashRegex is called', function() {
             let router = new Router();

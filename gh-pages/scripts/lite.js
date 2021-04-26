@@ -119,19 +119,28 @@ var Router = function Router() {
       return path.pattern.test(hash);
     });
     var value = path ? path.value : null;
-    var search = /\?.+$/.exec(hash);
-    search = search ? search[0] : location.search;
-    var urlArgs = router.getSearchParams(search);
-    onHashChange(hash, value, urlArgs);
+    var searchParams = router.getSearchParams();
+    onHashChange(hash, value, searchParams);
   };
 
   router.onHashChange = options.onHashChange || onHashChange;
 
-  router.getSearchParams = function (search) {
+  router.getSearchParams = function () {
+    var search = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : location.search;
+
     if (!search) {
-      return null;
+      search = /\?+$/.exec(location.hash);
+
+      if (search) {
+        search = search[0];
+      }
     }
 
+    if (!search) {
+      return;
+    }
+
+    search = search.replace('&amp;', '&');
     var params = new URLSearchParams(search);
     var objParams = {};
 

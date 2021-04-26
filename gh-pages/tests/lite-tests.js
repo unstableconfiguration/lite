@@ -109,17 +109,21 @@ let Router = function(options = {}) {
         });        
         let value = path ? path.value : null;
 
-        let search = /\?.+$/.exec(hash);
-        search = search ? search[0] : location.search;
-        let urlArgs = router.getSearchParams(search);
+        let searchParams = router.getSearchParams();
         
-        onHashChange(hash, value, urlArgs);
+        onHashChange(hash, value, searchParams);
     };
     router.onHashChange = options.onHashChange || onHashChange;
     
+    
 
-    router.getSearchParams = function(search) { 
-        if(!search) { return null; }
+    router.getSearchParams = function(search = location.search) { 
+        if(!search) {
+            search = /\?+$/.exec(location.hash);
+            if(search) { search = search[0]; }
+        }
+        if(!search) { return; }
+        search = search.replace('&amp;', '&');
 
         let params = new URLSearchParams(search);
         
@@ -534,13 +538,22 @@ let RouterTests = function() {
             assert(parsed.key1 == "val1");
         });
 
+        it('should convert "amp;" to "&" when location.hash is used', function() { 
+            let router = new Router();
+            window.onhashchange = null;
+            let parsed = router.getSearchParams("?key1=val1&amp;key2=val2");
+            assert(parsed.key2 == 'val2');
+        });
+
         it('should escape special characters', function() { 
             let router = new Router(); 
             window.onhashchange = null;
             let pattern = router.getHashRegex('testing()');
-            window.pattern = pattern;
             assert(pattern.test('#testing()'));
         });
+
+        // what else were we testing. 
+        // ah yeah, splitting params was converting & to amp
 
         it('should convert a path string to a regex when getHashRegex is called', function() {
             let router = new Router();
