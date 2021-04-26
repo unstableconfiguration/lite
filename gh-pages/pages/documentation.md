@@ -75,7 +75,7 @@ An alternative to setting content is setting a .contentUrl. In this case, the te
 let view = lite.extend({
     container : 'contentUrl-demo',
     // We can load the markdown source for this page.
-    contentUrl : './documentation.md'
+    contentUrl : './contentUrl-demo.md'
 });
 
 new view().attach();
@@ -199,10 +199,26 @@ Will add a script link like this to the header:
 ```
 
 # Router
+lite.Router is a utility to handle changes to the url hash.
 
-## initialization
+```javascript
+let router = new lite.Router({
+    paths : [
+        {
+            hash : "onHashChange", value : "onHashChange value"
+        }
+    ],
+    onHashChange : function(hash, value, args) {
+        document.getElementById('router-demo').innerHTML = '' +
+            '<b>Hash: </b>' + hash + 
+            ' <b>Value: </b>' + (value ? value.toString() : 'null') + 
+            ' <b>Args: </b>' + JSON.stringify(args);
 
-## .paths[]
+    }
+});
+window.router = router;
+```
+<div id='router-demo'></div>
 
 # XHR
 
