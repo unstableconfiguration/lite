@@ -166,9 +166,20 @@ var Router = function Router() {
     return router.paths;
   };
 
+  var escapeSpecialChars = function escapeSpecialChars(hash) {
+    ['(', ')'].forEach(specialChar => {
+      hash = hash.replace(specialChar, '\\' + specialChar);
+    });
+    return hash;
+  };
+
+  var escapeWildCard = function escapeWildCard(hash) {
+    return hash.replace(/{.+}/, '.+');
+  };
+
   router.getHashRegex = function (hash) {
-    hash = hash.replace(/{.+}/, '.+');
-    hash = hash.replace('/', '\/');
+    hash = escapeWildCard(hash);
+    hash = escapeSpecialChars(hash);
     /* hash to match #location/hash
         with ?optional=true&parameters=1*/
 
