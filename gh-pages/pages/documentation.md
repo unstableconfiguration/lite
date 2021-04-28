@@ -199,26 +199,88 @@ Will add a script link like this to the header:
 ```
 
 # Router
-lite.Router is a utility to handle changes to the url hash.
+lite.Router is a utility to handle changes to the url hash. It is initialized once per page and has two major components: a paths array and an onHashChange event handler. Once initialized, it will attach the onHashChange handler to the window.onhashchange event.  
+When the window.location.hash changes, the router will call the onHashChange event handler, passing up to three parameters:  
+* hash: This will be the same value as window.location.hash
+* value: The router will attempt to match the hash to one of the paths' hash value. If it does, it will pass the 'value' of that path. 
+* args: If there are URL search parameters (?param1=x&param2=y), they will be parsed into an object and passed as this third parameter.
+
+## Basic Usage
+The router is initialized with a paths array and an onHashChange event handler. New paths can be added after initialization. Because the router attaches an event to the window.onhashchange event, only one router should be initialied in an application.
 
 ```javascript
 let router = new lite.Router({
     paths : [
-        {
-            hash : "onHashChange", value : "onHashChange value"
-        }
+        { hash : 'routerTest', value : 'Testing basic hash:value pairing' },
+        { hash : 'wildCardTest/{any}', value : 'Testing hash wildcards' },
+        { hash : 'paramsTest', value : 'Testing parameter parsing' },
+        { hash : /^#patternTest$/, value : 'Testing regex pattern' }
     ],
     onHashChange : function(hash, value, args) {
-        document.getElementById('router-demo').innerHTML = '' +
-            '<b>Hash: </b>' + hash + 
-            ' <b>Value: </b>' + (value ? value.toString() : 'null') + 
-            ' <b>Args: </b>' + JSON.stringify(args);
-
+        document.getElementById('router-demo-hash').innerText = hash;
+        document.getElementById('router-demo-value').innerText = value;
+        document.getElementById('router-demo-args').innerText = JSON.stringify(args);
     }
 });
 window.router = router;
 ```
-<div id='router-demo'></div>
+<div id='router-demo'>
+    <div><span><b>Hash: </b></span><span id='router-demo-hash'></span></div>
+    <div><span><b>Value: </b></span><span id='router-demo-value'></span></div>
+    <div><span><b>Args: </b></span><span id='router-demo-args'></span></div>
+</div>
+<div><a href="#routerTest">Matching url hash to value</a></div>
+<div><a href="#wildCardTest/1">Matching url hash with wildcard</a></div>
+<div><a href="#paramsTest?param1=1&param2=b">URL search params parsing</a></div>
+<div><a href="#patternTest">Regex pattern matching</a></div>
+
+## .paths[path]
+A path is an object for defining a relationship between a location.hash and a value. When the window.onhashchange event is triggered, the router will check the .paths array for a path that matches the location.hash.  
+
+```javascript
+let paths = [
+    // Literal hash: Match the location.hash exactly with optional URLSearchParams
+    { hash : 'page', value : 'Matches: #page' },
+    { hash : 'file/path', value : 'Matches: #file/path' },
+
+    // Wildcards: Match location.hash exactly except where {braces} are used
+    { hash : 'page/{id}', value : 'Matches: #page/1 or #page/notes' },
+    { hash : '{page}/test', value : 'Matches: docs/test or api/test' },
+
+    // Regular Expression: Match where pattern.test(location.hash) is true.
+    // Note: will not match URLSearchParams unless they are accounted for in the custom pattern
+    { hash : /^#page$/, value : 'Matches: #page' },
+    { hash : /^#file\/path\/.+(\?.*)?$/, value : 'Matches: #file/path/id?param1=1' }
+]
+```
+
+## router.onHashChange();
+onHashChange will be called any time the window.location.hash is modified. Up to three parameters will be passed to it. 
+
+**hash:** The first parameter will be the location.hash value
+**value:** The second parameter will match the .value of a matched path. If no path matches the location.hash, value will be null. 
+**args:** The third parameter will be an object representing URLSearchParams (?arg1=1&arg2=2) contained in the hash. If there are no search parameters, args will be null.
+
+```javascript
+let routerInit = {
+    paths : [/*...*/],
+    onHashChange : function(hash, value, args) { 
+        // Since value can be any type, there are unlimited strategies for handling it. 
+        if(!value) { notFoundRedirect(); }
+        if(typeof(value) === 'string') { import(value).then(r => {/*...*/}); }
+        if(typeof(value) === 'function') { value(args); }
+        if(value instanceof Promise) { value.then(response => { /*...*/ }); }
+    }
+}
+```
+
+## .addPath() / .addPaths()
+router.addPath(path) and router.addPaths([paths]) can be used to add paths to the router after initialization. 
+
+```javascript
+// Router was set as a window/global variable in the basic-usage example
+window.router.addPath({ hash : 'addPath/test', value : 'Testing .addPath' });
+```
 
 # XHR
 
