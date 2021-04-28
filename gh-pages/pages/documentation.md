@@ -75,7 +75,7 @@ An alternative to setting content is setting a .contentUrl. In this case, the te
 let view = lite.extend({
     container : 'contentUrl-demo',
     // We can load the markdown source for this page.
-    contentUrl : './contentUrl-demo.md'
+    contentUrl : './documentation/contentUrl-demo.md'
 });
 
 new view().attach();
