@@ -157,21 +157,16 @@ var Router = function Router() {
 
   router.addPath = function (path) {
     if (path.hash instanceof RegExp) {
-      router.paths.push({
-        pattern: path.hash,
-        value: path.value
-      });
+      path.pattern = path.hash;
+      router.paths.push(path);
     }
 
     if (typeof path.hash !== 'string') {
       return;
     }
 
-    var pattern = router.getHashRegex(path.hash);
-    router.paths.push({
-      pattern: pattern,
-      value: path.value
-    });
+    path.pattern = router.getHashRegex(path.hash);
+    router.paths.push(path);
     return router.paths;
   };
 

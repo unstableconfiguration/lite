@@ -140,11 +140,12 @@ let Router = function(options = {}) {
     */
     router.addPath = function(path) {
         if(path.hash instanceof RegExp) { 
-            router.paths.push({ pattern : path.hash, value : path.value });
+            path.pattern = path.hash;
+            router.paths.push(path);
         }
         if(typeof(path.hash) !== 'string') { return; }
-        let pattern = router.getHashRegex(path.hash);
-        router.paths.push({ pattern : pattern, value : path.value });
+        path.pattern = router.getHashRegex(path.hash);
+        router.paths.push(path);
         return router.paths;
     };
 
@@ -507,66 +508,77 @@ let LiteTests = function() {
 let RouterTests = function() {
     let assert = chai.assert;
     describe('Router Tests', function() { 
-        it('should trigger custom onHashChange event when window hash changes', function(done) { 
-            return done();
-        });
 
-        it('should return path value if location hash matches path pattern', function(done) { 
-            new Router({
-                onHashChange : function(hash, value) {
-                    value();
-                },
-                paths : [
-                    { 
-                        hash : 'test/path', 
-                        value : function() { 
-                            done();
-                            window.onhashchange = null;
-                            window.location.hash = '';
-                        } 
+        describe('onHashChange tests', function() {
+            it('should trigger custom onHashChange event when window hash changes', function(done) { 
+                new Router({
+                    onHashChange : function() { 
+                        done(); 
+                        window.onhashchange = null;
                     }
-                ]
+                });
+                window.onhashchange();
             });
-            window.location.hash = 'test/path';
-            window.onhashchange();
+
+            it('should return path.value if a path.pattern matches location.hash', function(done) { 
+                new Router({
+                    onHashChange : function(path, value) {
+                        value();
+                    },
+                    paths : [
+                        { 
+                            hash : 'test/path', 
+                            value : function() { 
+                                done();
+                                window.onhashchange = null;
+                                window.location.hash = '';
+                            } 
+                        }
+                    ]
+                });
+                window.location.hash = 'test/path';
+                window.onhashchange();
+            });
+        });
+        
+
+        describe('path.hash parsing / pattern matching tests', function() {
+            it('should escape special characters', function() { 
+                let router = new Router(); 
+                window.onhashchange = null;
+                let pattern = router.getHashRegex('testing()');
+                assert(pattern.test('#testing()'));
+            });
+            
+            it('should convert a path string to a regex when getHashRegex is called', function() {
+                let router = new Router();
+                window.onhashchange = null;
+                let pattern = router.getHashRegex('test/path');
+                assert(pattern.test('#test/path'));
+            });
+
+            it('should allow for path wildcards when {braces} are used in the path', function() {
+                let router = new Router();
+                window.onhashchange = null;
+                let pattern = router.getHashRegex('test/path/{id}');
+                assert(pattern.test('#test/path/wildcard'));
+            });
         });
 
-        it('should parse url parameters into object when getSearchParams is called', function() { 
-            let router = new Router();
-            window.onhashchange = null;
-            let parsed = router.getSearchParams("?key1=val1&key2=val2");
-            assert(parsed.key1 == "val1");
-        });
-
-        it('should convert "amp;" to "&" when location.hash is used', function() { 
-            let router = new Router();
-            window.onhashchange = null;
-            let parsed = router.getSearchParams("?key1=val1&amp;key2=val2");
-            assert(parsed.key2 == 'val2');
-        });
-
-        it('should escape special characters', function() { 
-            let router = new Router(); 
-            window.onhashchange = null;
-            let pattern = router.getHashRegex('testing()');
-            assert(pattern.test('#testing()'));
-        });
-
-        // what else were we testing. 
-        // ah yeah, splitting params was converting & to amp
-
-        it('should convert a path string to a regex when getHashRegex is called', function() {
-            let router = new Router();
-            window.onhashchange = null;
-            let pattern = router.getHashRegex('test/path');
-            assert(pattern.test('#test/path'));
-        });
-
-        it('should allow for path wildcards when {braces} are used in the path', function() {
-            let router = new Router();
-            window.onhashchange = null;
-            let pattern = router.getHashRegex('test/path/{id}');
-            assert(pattern.test('#test/path/wildcard'));
+        describe('URLSearchParameter parsing tests', function() { 
+            it('should parse url parameters into object when getSearchParams is called', function() { 
+                let router = new Router();
+                window.onhashchange = null;
+                let parsed = router.getSearchParams("?key1=val1&key2=val2");
+                assert(parsed.key1 == "val1");
+            });
+    
+            it('should convert "amp;" to "&" when location.hash is used', function() { 
+                let router = new Router();
+                window.onhashchange = null;
+                let parsed = router.getSearchParams("?key1=val1&amp;key2=val2");
+                assert(parsed.key2 == 'val2');
+            });
         });
 
     });
