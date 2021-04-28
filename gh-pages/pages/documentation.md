@@ -282,10 +282,70 @@ router.addPath(path) and router.addPaths([paths]) can be used to add paths to th
 window.router.addPath({ hash : 'addPath/test', value : 'Testing .addPath' });
 ```
 
-# XHR
+# xhr
+lite.xhr is XMLHttpRequest wrapper utility that extends the syntax of default XMLHttpRequest objects. Its main functions are to allow XHR requests to be built and executed in one line of code.  
 
-## .get(url, args)
+## .init 
+.init initializes, opens, and returns a XMLHttpRequest object. It requires a url parameter, which will be used to call .open(url, 'GET', true) before returning the request. It has an optional second parameter, which is an object that can be used to set any XMLHttpRequest setting.  
 
-## .then(callback)
+```javascript
+window.xhr = lite.xhr;
 
-## .error(handler)
+let request = xhr.init('./documentation/xhr-init-demo.md');
+request.addEventListener('load', function() { 
+    document.getElementById('xhr-init-demo').innerText = '1. ' + request.response; 
+});
+request.send();
+```
+<div id='xhr-init-demo'></div>
+
+## args
+An args object is the second parameter of .init, and is a parameter of any xhr function. Any property it contains will be set on the underlying XMLHttpRequest object, allowing for any setting to be defined. 
+
+```javascript
+xhr.init('./documentation/xhr-init-demo.md', {
+    method : 'GET', // default: "GET"
+    async : true, // default: true
+    responseType : 'text', // default: "text"
+    // Events: loadstart, load, loadend, error, progreess, timeout, abort
+    load : function(ev) {
+        document.getElementById('xhr-init-demo-b').innerText = '2. ' + ev.target.response;
+    }
+}).send();
+```
+<div id='xhr-init-demo-b'></div>
+
+## .get()
+Because 'GET' is the default verb, xhr.get is functionally identical to xhr.init. Future development will likely include additional functions for different HTTP verbs. 
+
+```javascript
+xhr.get('./documentation/xhr-get-demo.md', {
+    load : function(ev) {
+        document.getElementById('xhr-get-demo')
+            .innerText = ev.target.response;
+    }
+}).send()
+```
+<div id='xhr-get-demo'></div>
+
+## .then() / .load()
+.then(response) and .load(response) are aliases for the same extension function that resolve the request by calling .send() and returning the .response value. 
+
+```javascript
+xhr.get('./documentation/xhr-get-demo.md')
+    .then(response => document.getElementById('xhr-then-demo').innerText = response);
+    //.load(response => ...)
+```
+<div id='xhr-then-demo'></div>
+
+## .error()
+.error(ex) is an extension function that can be chained on to .then/.load to allow for error handling.
+
+```javascript
+xhr.get('./documentation/fail.md')
+    .then(response => { /*...*/ })
+    .error(ex => { 
+        document.getElementById('xhr-error-demo').innerText = 'Exception caught'
+    });
+```
+<div id='xhr-error-demo'></div>
