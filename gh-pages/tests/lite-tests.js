@@ -632,9 +632,11 @@ let XHRTests = function() {
             });
 
             it('should throw an error when .then() fails', function(done) {
-                xhr.get('./fail.txt')
-                    .then(r => { assert(false); })
-                    .error(e => { done(); });
+                xhr.get('https://fail.txt', { timeout : 50 })
+                    .then(r => {  return null; })
+                    .error(e => { 
+                        done(); 
+                    });
             });
 
         });
