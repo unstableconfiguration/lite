@@ -1,6 +1,6 @@
 {
   "name": "lite",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "minimal SPA utility",
   "main": "dist/lite.js",
   "private": true,
