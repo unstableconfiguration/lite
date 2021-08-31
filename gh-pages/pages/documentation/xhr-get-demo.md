@@ -1,1 +1,0 @@
-XHR get() demo loaded

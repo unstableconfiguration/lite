@@ -1,89 +1,53 @@
-# Lite
-Lite is a utility suite for building single page applications. From a MVC standpoint, it can create a controller that loads a text/html template and binds it to a HTML element, while exposing event lifecycle hooks that allow for loading and binding data. It also contains a router utility that allows for control over changes to the window hash. 
+# lite.js (work in progress)
+Lightweight, single-page, javascript framework. 
 
-
-## Example Usage
-
-```
-    let controller = lite.extend({
-        // Content can be provided as a html string
-        content : '<div id="exampleDiv"></div>'
-        // Content can be loaded by url
-        , contentUrl : 'exampleTemplate.html'
-
-        // Data can be declared and added directly
-        , data : { message : 'hello world' }
-
-        // Data can be loaded via an async function 
-            // loadData is called with .attach()
-        , loadData : function() {
-            let view = this;
-            import('exampleData.js')
-                .then((result) => {
-                    // .setData kicks off the data binding lifecycle
-                    view.setData(result.data);
-                });
-        }
-
-        , onContentLoaded : function(content){
-            console.log('1a', 'content loaded', content);
-        }
-        , onDataLoaded : function(data){
-            console.log('2', 'data loaded', data)
-        }
-        // Executes after onContentLoaded
-        , onContentBound : function(content){
-            console.log('1b', 'content bound');
-        }
-        // Executes after onContentBound and onDataLoaded
-        , onDataBound : function(data){
-            console.log('3', 'data bound', data);
-        }   
-    });
-
-    let container = document.createElement('div');
-    document.body.appendChild(container);
-
-    new controller().attach(container);
-```
-
-## Public functions
-
-* .attach(container) : Initiates the view lifecycle, loading the content and data, and binding them to the page.
-* .extend(options) : Creates a derived class with Lite as its base which is extended by the properties in the options object parameter. 
-* .loadStyleSheet(uri) : Adds a <link> element to the page head if one does not already exist for the given uri
-
-## View Lifecycle hooks
-The view lifecycle contains several events that can be overridden to execute custom code. 
-
-* initialize: Executes as the last part of the object initialization.
-* loadData: Executes when .attach() is called if .data has not been set. 
-* onDataLoaded: executes when .setData(data) is called
-* onDataBound: Executes after .onDataLoaded() and after .onContentBound()
-* onContentLoaded: Executes after content has been loaded but before it has been bound to the page.
-* onContentBound: Executes after .html content has been added to the page. 
-
-## Features
-
-#### Data binding 
-HTML elements in the content can be given a 'bind' attribute. If the value for bind matches a property in the data, the element's .value or .innerHTML will be set to the value from the data for that property. 
+## lite
+Basic template + data binder. Attaches string/html content to a container element and performs logic-less data binding. 
 
 ```
-let controller = lite.extend({
-    content : "<span id='spanMessage' data-field='message'></span>",
-    data : { message : 'hi!' },
-    onDataBound : function() { 
-        let span = document.getElementById('spanMessage');
-        console.log(span.innerHTML); // expect hi!
+import { lite } from 'lite'
+
+var vm = lite.extend({
+    container : document.getElementById('main'),
+    content : '<span data-bind="propertyA"></span><span data-bind="nested.propertyB"></span>',
+    data = { propertyA : 'test', nested : { propertyB : 'test2' } },
+    initialize : function() { 
+        console.log('initializing')
     }
 });
-let container = document.createElement('div');
-document.body.appendChild(container);
-new controller().attach(container);
+vm = new vm();
 ```
 
+## router
+Creates a collection of pattern-value pairs to be handled by a custom onHashChange event. 
 
+The example below pairs with bundlers that utilize dynamic imports. 
+```
+import { router } from 'lite';
 
+let main = document.getElementById('main');
+let load = (page) => new page.vm({ container : main });
+router.addRoutes([
+    { route : 'path1', value : () => { import('./pages/path1.js').then(load); } },
+    { route : 'paths/path2', value : () => { import('./pages/paths/path2.js').then(load); } }
+]);
 
+router.onHashChange = function(value) { 
+    if(value == '404') { /* Not found handler */ } 
+    if(typeof(value) === 'function') { value(); }
+}
+```
 
+## xhr
+Syntax wrapper for xmlhttprequests for easy promise-like requests. 
 
+```
+import { xhr } from 'lite'
+
+xhr.get('http://example.com/')
+    .then(res => { /* ... */ });
+
+xhr.post('http://someapi.com/endpoint', { some : 'data' })
+    .then(res => { /* ... */})
+
+```
