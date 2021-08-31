@@ -1,4 +1,4 @@
-# lite.js (work in progress)
+# lite.js 
 Lightweight, single-page, javascript framework. 
 
 ## lite
