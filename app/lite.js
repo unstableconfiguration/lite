@@ -45,6 +45,7 @@ export let Lite = function(args = {}) {
             _lite.container.removeChild(_lite.container.firstChild);
         }
         _lite.container.insertAdjacentHTML('afterbegin', _lite.content);
+        _lite.onContentBound();
     }
 
     /* data binding
@@ -63,6 +64,7 @@ export let Lite = function(args = {}) {
                 if(typeof(el.value) !== 'undefined') { el.value = val; }
                 else { el.innerHTML = val; }
             });
+        _lite.onDataBound();
     }
 
     _lite.loadStyleSheet = function(uri) {
@@ -98,6 +100,8 @@ export let Lite = function(args = {}) {
     }
 
     _lite.initialize = function(args) { }
+    _lite.onContentBound = function() { }
+    _lite.onDataBound = function() { }
     
     /* extend 
         Returns a 'new' constructor. Both .extend() and new() accept 
