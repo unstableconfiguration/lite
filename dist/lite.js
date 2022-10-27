@@ -1,1 +1,274 @@
-let e=new function(e={}){let t=this;t.routes=[];let n=function(e){};Object.defineProperty(t,"onHashChange",{get:function(){return n},set:function(e){n=e,window.onhashchange=t.__onHashChange}}),t.__onHashChange=function(){let e=location.hash.slice(1).split("?")[0],r=t.routes.find((t=>t.pattern.test(e))),o=r?r.value:"404";n(o)},t.onHashChange=e.onHashChange||n,t.getSearchParams=function(e=location.search){if(e||(e=/\?.+$/.exec(location.hash))&&(e=e[0]),!e)return;e=e.replace("&amp;","&");let t=new URLSearchParams(e),n={};for(const e of t.keys())n[e]=t.get(e);return n},t.addRoutes=function(e){Array.isArray(e)&&e.forEach((e=>t.addRoute(e)))},t.addRoute=function(e){if(e.route instanceof RegExp&&(e.pattern=e.route,t.routes.push(e)),"string"==typeof e.route)return e.pattern=t.getPathRegex(e.route),t.routes.push(e),t.routes};return t.getPathRegex=function(e){return e=function(e){return["(",")","/"].forEach((t=>{e=e.replace(t,"\\"+t)})),e}(e=function(e){return e.replace(/{.+}/,".+")}(e)),new RegExp("^"+e+"$")},t},t=function(e={}){let n=this;n.__container=null,Object.defineProperty(n,"container",{get:()=>n.__container,set:e=>{if("string"==typeof e&&(e=document.getElementById(e)),!(e instanceof HTMLElement))throw new Error("Cannot find HTMLElement: "+e);n.__container=e,n.__bindContent(),n.__bindData()}}),n.__content=null,Object.defineProperty(n,"content",{get:()=>n.__content,set:e=>{"string"==typeof e&&(n.__content=e,n.__bindContent(),n.__bindData())}}),n.__data=null,Object.defineProperty(n,"data",{get:()=>n.__data,set:e=>{n.__data=e,n.__bindData()}}),n.__bindContent=function(){if(n.__container&&n.__content){for(;n.container.firstChild;)n.container.removeChild(n.container.firstChild);n.container.insertAdjacentHTML("afterbegin",n.content),n.onContentBound()}},n.__bindData=function(){n.__container&&n.__content&&n.__data&&(n.container.querySelectorAll("[data-field]").forEach((e=>{let t=(e.getAttribute("data-field")||e.id).split(".").reduce(((e,t)=>e[t]),n.__data);void 0!==e.value?e.value=t:e.innerHTML=t})),n.onDataBound())},n.loadStyleSheet=function(e){let t=document.createElement("link");t.rel="stylesheet",t.type="text/css",t.href=e;let n=document.getElementsByTagName("link");if(!Array.from(n).some((e=>e.href==t.href)))return document.getElementsByTagName("head")[0].appendChild(t),t},n.loadScript=function(e){let t=document.createElement("script");t.src=e;let n=document.getElementsByTagName("script");if(!Array.from(n).some((e=>e.src==t.src)))return document.getElementsByTagName("head")[0].appendChild(t),t},n.initialize=function(e){},n.onContentBound=function(){},n.onDataBound=function(){},n.extend=function(e={}){return function(n={}){for(let t in n)e[t]=n[t];return t.call(this,e),this}};for(let t in e)this[t]=e[t];return n.initialize.bind(n)(),n},n=new t;const r=new function(){let e=this;e.open=function(t,n={}){n=e.setDefaultArgs(n);let r=new XMLHttpRequest;r.open(n.method,t,n.async),r=e.__setEvents(r,n),r=e.__setCallbackChains(r),r=e.__setHeaders(r,n);for(let e in n)r[e]=n[e];return r},e.get=function(t,n){return e.open(t,n)},e.post=function(t,n,r={}){return r.method="POST",r.data=n,e.open(t,r)},e.put=function(t,n,r={}){return r.method="PUT",r.data=n,e.open(t,r)},e.delete=function(t,n={}){return n.method="DELETE",e.open(t,n)},e.defaultArgs={method:"GET",async:!0,responseType:"text"},e.setDefaultArgs=function(t={}){for(let n in e.defaultArgs)t[n]=t[n]||e.defaultArgs[n];return t};let t=["abort","error","load","loadend","loadstart","progress","timeout"];return e.__setEvents=function(e,n={}){return t.forEach((t=>{let r=n[t]||n["on"+t];r&&e.addEventListener(t,(e=>r(e)))})),e},e.__setCallbackChains=function(e){return e.load=function(t){return e.addEventListener("load",(n=>t(e.response))),e.send(e.data),e},e.error=function(t){return e.addEventListener("error",t),e},e.then=e.load,e.catch=e.error,e},e.__setHeaders=function(e,t={}){return Array.isArray(t.headers)?(t.headers.forEach((t=>{t.header&&t.value?e.setRequestHeader(t.header,t.value):console.log('Header must be in form { header : "ABC", value : "XYZ" }')})),e):e},e};export{t as Lite,n as lite,e as router,r as xhr};
+/* 
+*/
+class Router {
+    /* { pattern : RegExp, value : any } */
+    routes = [];
+
+    constructor(options = {}) {
+        if(options.onHashChange) this.onHashChange = options.onHashChange;
+        window.onhashchange = this.#onHashChange;
+    }
+
+    /* onHashChange - user supplied event
+        When locatino.hash is changed, is called with first matching route value. */
+    onHashChange(value) { }
+
+    #onHashChange() {
+        let hash = location.hash
+            .slice(1) // skip # symbol
+            .split('?')[0]; // ignore query
+            
+        let path = router.routes.find(route => 
+            route.pattern.test(hash));
+        let value = path ? path.value : '404';
+
+        this.onHashChange(value);
+    }
+
+    /* Parse url search into JSON object */
+    getSearchParams(search = location.search) {
+        if(!search) {
+            search = /\?.+$/.exec(location.hash);
+            if(search) { search = search[0]; }
+        }
+        if(!search) { return; }
+        search = search.replace('&amp;', '&');
+
+        let params = new URLSearchParams(search);
+        
+        let objParams = {};
+        for(const k of params.keys()) {
+            objParams[k] = params.get(k);
+        }
+        
+        return objParams;
+    }
+
+    addRoutes(routes) {
+        if(!Array.isArray(routes)) return;
+        routes.forEach(route => this.addRoute(route));
+    }
+
+    addRoute(route) {
+        if(route.route instanceof RegExp) {
+            route.pattern = route.route;
+            this.routes.push(route);
+        }
+
+        if(typeof(route.route) !== 'string') return; 
+
+        route.pattern = this.#getPathRegex(route.route);
+
+        this.routes.push(route);
+        return this.routes;
+    }
+
+    #getPathRegex(path) {
+        path = this.#escapeWildCard(path);
+        path = this.#escapeSpecialChars(path);
+
+        let pattern = new RegExp('^' + path + '$');
+        return pattern;
+
+    }
+    
+    /* Replaces syntax {wildcard} with .+ regex wildcard
+        /route/{wildcard} -> /route/.+
+    */
+    #escapeWildCard(path) {
+        return path.replace(/{.+}/g, '.+');
+    }
+    
+    /* Escapes regex special characters when building pattern.*/
+    #escapeSpecialChars(path) {
+        ['(', ')', '/']
+        .forEach(specialChar => {
+            path = path.replace(specialChar, '\\' + specialChar);
+        });
+        return path;
+    }
+}
+
+class Lite {
+    /* Container: 
+        Can be set as an id for an html element
+        Can be set as a query selector for an html element
+        Can be set as a reference to an html element
+    */
+    container = '';
+    /* Content
+        String value to set as the container's innerHTML
+    */
+    content = '';
+
+    constructor(options = {}) { 
+        Object.assign(this, options);
+        
+        this.container = this.#getContainer();
+        if(!this.container instanceof HTMLElement)
+            throw `could not parse container to html element. value is ${this.container}`;
+    
+        this.#appendContent();
+        this.onContentBound();
+    }
+
+    /* onContentBound
+        Overridable. Is called after content is appended to the container
+    */
+    onContentBound() { }
+
+    #getContainer() { 
+        let element = this.container;
+        if(typeof(element) == 'string') {
+            element = document.getElementById(element);
+            if(!element)
+                element = document.querySelector(element);
+        }
+
+        return element instanceof HTMLElement
+            ? element
+            : this.container;
+    }
+
+    #appendContent() { 
+        while(this.container.firstChild)
+            this.container.removeChild(this.container.firstChild);
+        this.container.insertAdjacentHTML('afterbegin', this.content);
+    }
+}
+
+class XHR {
+
+    open(url, args = {}) {
+        args = this.#setDefaultArgs(args);
+
+        let xhr = new XMLHttpRequest();
+        xhr.open(args.method, url, args.async);
+
+        xhr = this.#setEvents(xhr, args);
+        xhr = this.#setCallbackChains(xhr);
+        xhr = this.#setHeaders(xhr, args);
+
+        Object.assign(args, xhr);
+
+        return xhr;
+    }
+
+    get(url, args) { return this.open(url, args); }
+
+    post(url, data, args = {}) {
+        args.method = 'POST';
+        args.data = data;
+        return this.open(url, args);
+    }
+
+    put(url, data, args = {}) {
+        args.method = 'PUT';
+        args.data = data;
+        return this.open(url, args);
+    }
+
+    delete(url, args = {}) {
+        args.method = 'DELETE';
+        return this.open(url, args);
+    }
+    
+    defaultArgs = { 
+        method : 'GET',
+        async : true,
+        responseType : 'text'
+    }
+
+    #setDefaultArgs = function(args = {}) {
+        for(let k in this.defaultArgs) { 
+            args[k] = args[k] || this.defaultArgs[k];
+        }
+        return args;
+    }
+
+    #events = [ 
+        'abort', 'error', 'load', 'loadend', 'loadstart', 'progress', 'timeout'
+    ];
+
+    #setEvents = function(xhr, args = {}) { 
+        this.#events.forEach(e => { 
+            let ev = args[e] || args['on' + e];
+            if(ev) { 
+                xhr.addEventListener(e, (e) => ev(e));
+            }
+        });
+        return xhr;
+    }
+
+    #setCallbackChains = function(xhr) { 
+        xhr.load = function(onLoad) {
+            xhr.addEventListener('load', (r) => onLoad(xhr.response));
+            xhr.send(xhr.data);
+            return xhr;
+        };
+
+        xhr.error = function(onError) { 
+            xhr.addEventListener('error', onError);   
+            return xhr;
+        };
+
+        xhr.then = xhr.load;
+        xhr.catch = xhr.error;
+        return xhr;
+    }
+
+    #setHeaders = function(xhr, args = {}) {
+        if(!Array.isArray(args.headers)) { return xhr; }
+        args.headers.forEach(header => { 
+            if(!header.header || !header.value) {  
+                console.log('Header must be in form { header : "ABC", value : "XYZ" }');
+                return;
+            }
+            xhr.setRequestHeader(header.header, header.value);
+        });
+
+        return xhr;
+    }
+}
+
+// how much does it make sense to even have these here 
+// They are unscoped, just useful things to have around 
+// probably make them part of the client, not here. 
+class Utilities {
+    addCss(uri) {
+        let css = document.createElement('link');
+        css.rel = 'stylesheet';
+        css.type = 'text/css';
+        css.href = uri;
+       
+        let links = document.getElementsByTagName('link');
+        let hasLink = Array.from(links).some((link) => { 
+            return link.href == css.href;
+        });
+        if(hasLink) { return; }
+  
+        let head = document.getElementsByTagName('head')[0];
+        head.appendChild(css);
+        return css;    
+    }
+
+    addScript(uri) { 
+        let script = document.createElement('script');
+        script.src = uri;
+
+        let scripts = document.getElementsByTagName('script');
+        let hasScript = Array.from(scripts).some((s) => {
+            return s.src == script.src;
+        });
+        if(hasScript) { return; }
+
+        let head = document.getElementsByTagName('head')[0];
+        head.appendChild(script);
+        return script;
+    }
+}
+
+Lite.prototype.utilities = new Utilities();
+Lite.prototype.xhr = new XHR();
+
+export { Lite, Router, Utilities, XHR };

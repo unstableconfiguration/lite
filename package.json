@@ -1,19 +1,17 @@
 {
   "name": "lite",
-  "version": "2.0.6",
-  "description": "minimal SPA utility",
+  "version": "3.0.0",
+  "description": "minimal SPA utility library",
   "main": "index.js",
   "private": true,
   "type": "module",
   "scripts": {
-    "test": "mocha",
     "build": "rollup --config rollup.config.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "rollup": "^2.56.3",
-    "rollup-plugin-terser": "^7.0.2"
+    "rollup": "^2.56.3"
   }
 }
