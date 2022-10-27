@@ -1,5 +1,15 @@
 import { router } from './app/router.js'
-import { lite, Lite } from './app/lite.js'
+import { Lite } from './app/lite.js'
 import { xhr } from './app/xhr.js'
+import { Utilities } from './app/utilities.js'
 
-export { Lite, lite, router, xhr }
+Lite.prototype.utilities = new Utilities();
+// Lite.Router
+// Lite.Xhr
+
+// Lite.prototype.router
+// Lite.prototype.xhr
+
+// Lets not export class instances
+
+export { Lite }

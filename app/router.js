@@ -1,3 +1,21 @@
+
+export class Router {
+    // regex-value collection
+    //
+    routes = [];
+
+    constructor(options = {}) {
+
+    }
+
+    // This will need to be reworked for class syntax. 
+    onHashChange() { }
+
+    
+}
+
+
+
 export let Router = function(options = {}){ 
     let router = this;
     router.routes = [ /* { pattern : /^xyz$/, value : any } */]
