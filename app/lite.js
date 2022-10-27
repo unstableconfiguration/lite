@@ -12,7 +12,9 @@ export class Lite {
 
     constructor(options = {}) { 
         Object.assign(this, options);
-        
+    }
+
+    bind() {
         this.container = this.#getContainer();
         if(!this.container instanceof HTMLElement)
             throw `could not parse container to html element. value is ${this.container}`;
