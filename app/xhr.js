@@ -1,67 +1,58 @@
- 
-export const XHR = function() { 
-    let _xhr = this;
+export class XHR {
 
-    _xhr.open = function(url, args = {}) {
-        args = _xhr.setDefaultArgs(args);
+    open(url, args = {}) {
+        args = this.#setDefaultArgs(args);
 
-        let xhr = new XMLHttpRequest();        
+        let xhr = new XMLHttpRequest();
         xhr.open(args.method, url, args.async);
 
-        xhr = _xhr.__setEvents(xhr, args);
-        xhr = _xhr.__setCallbackChains(xhr);
-        xhr = _xhr.__setHeaders(xhr, args);
-        
-        for(let k in args) { 
-            xhr[k] = args[k];
-        }
+        xhr = this.#setEvents(xhr, args);
+        xhr = this.#setCallbackChains(xhr);
+        xhr = this.#setHeaders(xhr, args);
+
+        Object.assign(args, xhr);
 
         return xhr;
     }
 
-    _xhr.get = function(url, args) { 
-        return _xhr.open(url, args);
-    }
+    get(url, args) { return this.open(url, args); }
 
-    _xhr.post = function(url, data, args = {}) { 
-        args.method = "POST";
+    post(url, data, args = {}) {
+        args.method = 'POST';
         args.data = data;
-        return _xhr.open(url, args);
+        return this.open(url, args);
     }
 
-    _xhr.put = function(url, data, args = {}) {
-        args.method = "PUT";
+    put(url, data, args = {}) {
+        args.method = 'PUT';
         args.data = data;
-        return _xhr.open(url, args);
+        return this.open(url, args);
     }
 
-    _xhr.delete = function(url, args = {}) {
-        args.method = "DELETE";
-        return _xhr.open(url, args);
+    delete(url, args = {}) {
+        args.method = 'DELETE';
+        return this.open(url, args);
     }
-
-    _xhr.defaultArgs = { 
+    
+    defaultArgs = { 
         method : 'GET',
         async : true,
         responseType : 'text'
     }
 
-    _xhr.setDefaultArgs = function(args = {}) {
-        for(let k in _xhr.defaultArgs) { 
-            args[k] = args[k] || _xhr.defaultArgs[k]
+    #setDefaultArgs = function(args = {}) {
+        for(let k in this.defaultArgs) { 
+            args[k] = args[k] || this.defaultArgs[k]
         }
         return args;
     }
 
-    let events = [ 
+    #events = [ 
         'abort', 'error', 'load', 'loadend', 'loadstart', 'progress', 'timeout'
-    ]
+    ];
 
-    /* If args contains events, e.g.: 'load', 'onload', 'onerror', 'progress'
-        This will add an event listener for the relevant event.
-    */
-    _xhr.__setEvents = function(xhr, args = {}) { 
-        events.forEach(e => { 
+    #setEvents = function(xhr, args = {}) { 
+        this.#events.forEach(e => { 
             let ev = args[e] || args['on' + e];
             if(ev) { 
                 xhr.addEventListener(e, (e) => ev(e))
@@ -70,14 +61,7 @@ export const XHR = function() {
         return xhr;
     }
 
-    /* Allows for handling callbacks with function chaining. Also makes xhr a 
-        'thennable' interface.
-        example:
-        xhr.get(url)
-            .then(response => { ... })
-            .error(err => { ... }) 
-    */
-    _xhr.__setCallbackChains = function(xhr) { 
+    #setCallbackChains = function(xhr) { 
         xhr.load = function(onLoad) {
             xhr.addEventListener('load', (r) => onLoad(xhr.response));
             xhr.send(xhr.data);
@@ -94,7 +78,7 @@ export const XHR = function() {
         return xhr;
     }
 
-    _xhr.__setHeaders = function(xhr, args = {}) {
+    #setHeaders = function(xhr, args = {}) {
         if(!Array.isArray(args.headers)) { return xhr; }
         args.headers.forEach(header => { 
             if(!header.header || !header.value) {  
@@ -106,10 +90,4 @@ export const XHR = function() {
 
         return xhr;
     }
-    
-    return _xhr;
 }
-
-export const xhr = new XHR();
-
-
