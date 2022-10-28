@@ -18,16 +18,13 @@ export class DataBinding {
         let binding = this;
         return {
             get(target, key) {
-            return (typeof target[key] === 'object' && target[key] !== null) 
-                ? new Proxy(target[key], binding.#getProxyHandler(container, options))
-                : target[key];
+                return Reflect.get(target, key);
             },
             set (target, key, value) {
                 let element = binding.#getElement(container, key, options);
                 binding.#setValue(element, key, options, value);
                 
-                target[key] = value;
-                return true;
+                return Reflect.set(target, key, value);
             }
         }
     }
