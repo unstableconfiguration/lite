@@ -5,6 +5,6 @@ import { HeaderUtilities } from './app/header-utilities.js'
 
 Lite.head = new HeaderUtilities();
 Lite.xhr = new XHR();
-Lite.Router = new Router();
+Lite.router = new Router();
 
 export { Lite, Router, XHR }
