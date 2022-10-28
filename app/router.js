@@ -6,7 +6,7 @@ export class Router {
 
     initialize() {
 
-        window.onhashchange = this.#onHashChange;
+        window.onhashchange = this.#onHashChange.bind(this);
     }
 
     /* onHashChange - user supplied event
