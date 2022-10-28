@@ -18,7 +18,7 @@ export class Router {
             .slice(1) // skip # symbol
             .split('?')[0]; // ignore query
             
-        let path = router.routes.find(route => 
+        let path = this.routes.find(route => 
             route.pattern.test(hash));
         let value = path ? path.value : '404';
 
