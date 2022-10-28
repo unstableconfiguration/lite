@@ -19,7 +19,7 @@ export class DataBinding {
         return {
             get(target, key) {
             return (typeof target[key] === 'object' && target[key] !== null) 
-                ? new Proxy(target[key], binding.getProxyHandler(container, options))
+                ? new Proxy(target[key], binding.#getProxyHandler(container, options))
                 : target[key];
             },
             set (target, key, value) {
