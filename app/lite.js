@@ -6,7 +6,9 @@ export const Lite = {}
 Lite.append = function(container, content) {
     container = getContainer(container);
     appendContent(container, content);
+    return container;
 }
+
 
 function getContainer(container) { 
     if(container instanceof HTMLElement) return container;
