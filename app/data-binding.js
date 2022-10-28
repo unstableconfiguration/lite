@@ -27,6 +27,7 @@ export class DataBinding {
                 binding.#setValue(element, key, options, value);
                 
                 target[key] = value;
+                return true;
             }
         }
     }
