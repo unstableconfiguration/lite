@@ -1,11 +1,11 @@
-/* 
-*/
+
+
 export class Router {
     /* { pattern : RegExp, value : any } */
     routes = [];
 
-    constructor(options = {}) {
-        if(options.onHashChange) this.onHashChange = options.onHashChange;
+    initialize() {
+
         window.onhashchange = this.#onHashChange;
     }
 

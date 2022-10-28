@@ -1,7 +1,4 @@
-// how much does it make sense to even have these here 
-// They are unscoped, just useful things to have around 
-// probably make them part of the client, not here. 
-export class Utilities {
+export class HeaderUtilities {
     addCss(uri) {
         let css = document.createElement('link');
         css.rel = 'stylesheet';

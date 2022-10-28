@@ -1,49 +1,30 @@
-export class Lite {
-    /* Container: 
-        Can be set as an id for an html element
-        Can be set as a query selector for an html element
-        Can be set as a reference to an html element
-    */
-    container = '';
-    /* Content
-        String value to set as the container's innerHTML
-    */
-    content = '';
+export const Lite = {}
 
-    constructor(options = {}) { 
-        Object.assign(this, options);
+/*
+    clears container and appends content. 
+*/
+Lite.append = function(container, content) {
+    container = getContainer(container);
+    appendContent(container, content);
+}
+
+function getContainer(container) { 
+    if(container instanceof HTMLElement) return container;
+    let element = container;
+
+    if(typeof(container) == 'string') {
+        element = document.getElementById(container);
+        if(!element)
+            element = document.querySelector(container);
     }
 
-    bind() {
-        this.container = this.#getContainer();
-        if(!this.container instanceof HTMLElement)
-            throw `could not parse container to html element. value is ${this.container}`;
-    
-        this.#appendContent();
-        this.onContentBound();
-    }
+    if(!element instanceof HTMLElement)
+        throw`container must be HTMLElement or a valid #id or css selector.`;
+    return element;
+}
 
-    /* onContentBound
-        Overridable. Is called after content is appended to the container
-    */
-    onContentBound() { }
-
-    #getContainer() { 
-        let element = this.container;
-        if(typeof(element) == 'string') {
-            element = document.getElementById(element);
-            if(!element)
-                element = document.querySelector(element);
-        }
-
-        return element instanceof HTMLElement
-            ? element
-            : this.container;
-    }
-
-    #appendContent() { 
-        while(this.container.firstChild)
-            this.container.removeChild(this.container.firstChild);
-        this.container.insertAdjacentHTML('afterbegin', this.content);
-    }
+function appendContent(container, content) { 
+    while(container.firstChild)
+        container.removeChild(container.firstChild);
+    container.insertAdjacentHTML('afterbegin', content);
 }
