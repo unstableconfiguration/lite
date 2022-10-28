@@ -18,7 +18,9 @@ export class DataBinding {
         let binding = this;
         return {
             get(target, key) {
-                return Reflect.get(target, key);
+                return (typeof target[key] === 'object' && target[key] !== null) 
+                    ? new Proxy(target[key], binding.getProxyHandler(container, options))
+                    : Reflect.set(target, key);
             },
             set (target, key, value) {
                 let element = binding.#getElement(container, key, options);
