@@ -23,7 +23,7 @@ export class DataBinding {
                 let element = binding.#getElement(container, key, options);
                 binding.#setValue(element, key, options, value);
                 
-                return key.contains('.')
+                return key.includes('.')
                     ? binding.#setNested(target, key, value)
                     : Reflect.set(target, key, value);
             }
