@@ -8,8 +8,7 @@ export class DataBinding {
         let proxy = new Proxy(data, this.#getProxyHandler(container, options));
         this.#addEventListeners(container, data, options);
 
-        for(let key in data)
-            proxy[key] = proxy[key];
+        this.#activateSetters(data, proxy);
 
         return proxy;
     }
@@ -28,6 +27,21 @@ export class DataBinding {
                     ? binding.#setNested(target, key, value)
                     : Reflect.set(target, key, value);
             }
+        }
+    }
+
+    /* Sets each property to itself to activate the setters. 
+        For a nested value { a : { b : { c : 1 } } }
+        It sets proxy['a.b.c'] = proxy['a']['b']['c'];
+    */
+    #activateSetters(data, proxy, keyBase = '') {
+        if(keyBase) keyBase = keyBase + '.';
+
+        for(let key in data) {
+            key = keyBase + key;
+            // get value by accumulator
+            let value = key.split('.').reduce((acc, p) => { return acc[p]; }, proxy);
+            proxy[key] = value; 
         }
     }
 
