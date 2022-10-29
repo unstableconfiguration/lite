@@ -42,6 +42,8 @@ export class DataBinding {
             // get value by accumulator
             let value = key.split('.').reduce((acc, p) => { return acc[p]; }, proxy);
             proxy[key] = value; 
+            
+            if(typeof(value) == 'object') this.#activateSetters(value, proxy, key)
         }
     }
 
